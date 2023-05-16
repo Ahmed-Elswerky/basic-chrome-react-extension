@@ -9,16 +9,18 @@ export const showAlert = ({
   variant = "warning",
   onClose = setAlert,
 }) => {
+  console.log('typeof setAlert',typeof setAlert);
   if (typeof setAlert != "function") setAlert = () => {};
   setAlert(
     <Alert
-      variant={variant}
-      open={true}
-      autoHideDuration={timeout}
-      message={message}
-      action={<Button onClick={() => setAlert()}>X</Button>}
-      onClose={() => onClose()}
-    />
+      style={{position:'fixed',top:'0',left:'50%',translate:'-50% 50%',zIndex:'99'}}
+      color={variant}
+      // open={true}
+      // autoHideDuration={timeout}
+      // message={message}
+      // action={<Button onClick={() => setAlert()}>X</Button>}
+      toggle={() => onClose()}
+    >{message}</Alert>
   );
   setTimeout(() => {
     setAlert();

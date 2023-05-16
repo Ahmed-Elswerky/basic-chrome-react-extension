@@ -26,11 +26,11 @@ import {
   ModalHeader,
 } from "reactstrap";
 // import { useReactToPrint } from "react-to-print";
-import SubTokens from "./SubTokens.jsx"; //TESTING_ONLY
+import SubTokens from "../components/SubTokens.jsx"; //TESTING_ONLY
 
 import { showAlert } from "../helpers/index.js";
 import config from "../config.js";
-import ServiceModalBtn from "./serviceModal.js";
+import ServiceModalBtn from "../components/serviceModal.js";
 
 /* Common TimeZone related functions used by CounterRun page */
 function calcTime(timeZone) {
@@ -43,7 +43,7 @@ var t0 = performance.now(); //TESTING_ONLY
 var fil1 = 0,
   latencyVal = 3;
 
-function CounterRun(props) {
+function CounterRun({ counter_id, setCounterId }) {
   //TESTING_ONLY
   if (!Firebase.apps.length) {
     Firebase.initializeApp(config);
@@ -95,11 +95,11 @@ function CounterRun(props) {
     validate_serv_for_tok_range_overlap_failed,
     set_validate_serv_for_tok_range_overlap_failed,
   ] = useState(false);
-  const [counter_id, set_counter_id] = useState(
-    props.match?.params?.id ||
-      window?.location?.pathname?.replace("/", "") ||
-      -1
-  );
+  // const [counter_id, set_counter_id] = useState(
+  //   props.match?.params?.id ||
+  //     window?.location?.pathname?.replace("/", "") ||
+  //     -1
+  // );
   const [counter_name, set_counter_name] = useState("");
   const [counter_state_char_limit, set_counter_state_char_limit] = useState(50);
   const [default_counter_state, set_default_counter_state] =
@@ -242,6 +242,7 @@ function CounterRun(props) {
     });
 
     set_loading(true);
+    console.log("counter_id", counter_id);
     if (counter_id != undefined && counter_id != "" && counter_id.length > 0) {
       let params = {};
       if (exitPoint === "via_handle_close_counter") {
@@ -284,19 +285,27 @@ function CounterRun(props) {
       }
 
       let c5Result = await callApiHandleCounterRun({ params });
+      setCounterId();
+
+      localStorage.removeItem('counterId')
+
       console.log("c5Result", c5Result);
       // callApiHandleCounterRun({ params }).then(() => {
       //   goBack();
       // });
     } else {
       goBack();
+      setCounterId();
+      localStorage.removeItem('counterId')
     }
   };
 
   const goBack = () => {
-    setTimeout(() => {
-      props?.history?.push("/counters");
-    }, 1000);
+    if (typeof props != "undefined")
+      setTimeout(() => {
+        props?.history?.push("/counters");
+      }, 1000);
+    else setCounterId();
   };
 
   /* 8. handleCloseCounter-------------------------------------------------------------------*/
@@ -346,7 +355,7 @@ function CounterRun(props) {
               // notifyMessage("tc", 4, res.message);
               showAlert({
                 message: res.message,
-                set_alert,
+                setAlert:set_alert,
                 severity: "success",
                 timeout: 6000,
               });
@@ -355,7 +364,7 @@ function CounterRun(props) {
           } else if (res.status == "failed") {
             showAlert({
               message: res.message,
-              set_alert,
+              setAlert:set_alert,
               severity: "error",
               timeout: 6000,
             });
@@ -370,7 +379,7 @@ function CounterRun(props) {
           set_loading(false);
           showAlert({
             message: "Encountered an error!",
-            set_alert,
+            setAlert:set_alert,
             severity: "error",
             timeout: 6000,
           });
@@ -691,7 +700,7 @@ function CounterRun(props) {
                                 message: `The counter has been closed by ${
                                   c.data().Close_Admin_Name
                                 }`,
-                                set_alert,
+                                setAlert:set_alert,
                                 severity: "error",
                                 timeout: 6000,
                               });
@@ -710,7 +719,7 @@ function CounterRun(props) {
                             } else {
                               showAlert({
                                 message: `The counter has been closed.`,
-                                set_alert,
+                                setAlert:set_alert,
                                 severity: "error",
                                 timeout: 6000,
                               });
@@ -733,7 +742,7 @@ function CounterRun(props) {
                   set_loading(false);
                   showAlert({
                     message: "Encountered an unexpected error while loading!",
-                    set_alert,
+                    setAlert:set_alert,
                     severity: "error",
                     timeout: 6000,
                   });
@@ -859,7 +868,7 @@ function CounterRun(props) {
                           if (!inc) servicesList.push(one);
 
                           set_services_list(servicesList);
-                          console.log("servicesList", servicesList);
+                          // console.log("servicesList", servicesList);
                         }
                       });
                     });
@@ -874,7 +883,7 @@ function CounterRun(props) {
                     set_loading(false);
                     showAlert({
                       message: `There are no services attached to this counter. Please check with your supervisor.`,
-                      set_alert,
+                      setAlert:set_alert,
                       severity: "error",
                       timeout: 6000,
                     });
@@ -1060,32 +1069,32 @@ function CounterRun(props) {
                                         i < servicesList.length;
                                         i++
                                       ) {
-                                        console.log(
-                                          "servListStartNum",
-                                          servListStartNum || "-1"
-                                        );
-                                        console.log(
-                                          "servListEndNum",
-                                          servListEndNum || "-1"
-                                        );
-                                        console.log(
-                                          "servicesList[i].start_num",
-                                          servicesList[i].start_num || "-1"
-                                        );
-                                        console.log(
-                                          "servicesList[i].end_num",
-                                          servicesList[i].end_num || "-1"
-                                        );
+                                        // console.log(
+                                        //   "servListStartNum",
+                                        //   servListStartNum || "-1"
+                                        // );
+                                        // console.log(
+                                        //   "servListEndNum",
+                                        //   servListEndNum || "-1"
+                                        // );
+                                        // console.log(
+                                        //   "servicesList[i].start_num",
+                                        //   servicesList[i].start_num || "-1"
+                                        // );
+                                        // console.log(
+                                        //   "servicesList[i].end_num",
+                                        //   servicesList[i].end_num || "-1"
+                                        // );
 
                                         var servListStartNum =
                                           servicesList[i].start_num;
                                         var servListEndNum =
                                           servicesList[i].end_num;
 
-                                        console.log(
-                                          "validate_serv_for_tok_range_overlap",
-                                          validate_serv_for_tok_range_overlap
-                                        );
+                                        // console.log(
+                                        //   "validate_serv_for_tok_range_overlap",
+                                        //   validate_serv_for_tok_range_overlap
+                                        // );
                                         if (
                                           validateServForTokRangeOverlap == true
                                         ) {
@@ -1242,7 +1251,7 @@ function CounterRun(props) {
               set_loading(false);
               showAlert({
                 message: "User not found!",
-                set_alert,
+                setAlert:set_alert,
                 severity: "error",
                 timeout: 6000,
               });
@@ -1255,7 +1264,7 @@ function CounterRun(props) {
         set_loading(false);
         showAlert({
           message: "Encountered an unexpected error while loading!",
-          set_alert,
+          setAlert:set_alert,
           severity: "error",
           timeout: 6000,
         });
@@ -1275,7 +1284,7 @@ function CounterRun(props) {
       set_loading(false);
       showAlert({
         message: "Encountered an unexpected error while loading!",
-        set_alert,
+        setAlert:set_alert,
         severity: "error",
         timeout: 6000,
       });
@@ -1351,293 +1360,232 @@ function CounterRun(props) {
     // Firebase.functions().useEmulator("localhost", 5000);
     let c1Result = await callApiHandleCounterRun({ params });
     // console.log("c1Result", c1Result);
-  }
-    const showTokenDetail = (id) => {
-      if (id?.length > 0)
-        showAlert({
-          message:
-            //  <TokenModal
-            //    id={id}
-            //    set_loading={(e) => set_loading(e)}
-            //    notifyMessage={notifyMessage}
-            //  />,
-            "",
-          set_alert,
-          severity: "success",
-          timeout: 6000,
-        });
-      // set_alert(
-      //   <ReactBSAlert
-      //     title={""}
-      //     onConfirm={() => hideAlert()}
-      //     onCancel={() => hideAlert()}
-      //     style={{ width: "60vw" }}
-      //   >
-      // <TokenModal
-      //   id={id}
-      //   set_loading={(e) => set_loading(e)}
-      //   notifyMessage={notifyMessage}
-      // />
-      //   </ReactBSAlert>
-      // );
-      else
-        showAlert({
-          message: `Please click "Next" button first! If there is any pending token to serve, its details will be made available.`,
-          set_alert,
-          severity: "error",
-          timeout: 6000,
-        });
-      // notifyMessage(
-      //   "tc",
-      //   3,
-      //   `Please click "Next" button first! If there is any pending token to serve, its details will be made available.`
-      // );
-    };
-
-    const To = () => {
+  };
+  const showTokenDetail = (id) => {
+    if (id?.length > 0)
       showAlert({
-        message: (
-          <SubTokens
-            ids={accessible_locations}
-            hide={() => hideAlert}
-            TokenDetails={() => showTokenDetail}
-            customer_id={customer_id}
-            request_approval_groups_assigned={request_approval_groups_assigned}
-          />
-        ),
-        set_alert,
-        severity: "secondary",
+        message:
+          //  <TokenModal
+          //    id={id}
+          //    set_loading={(e) => set_loading(e)}
+          //    notifyMessage={notifyMessage}
+          //  />,
+          "",
+        setAlert:set_alert,
+        severity: "success",
         timeout: 6000,
       });
-      // set_alert(
-      //   <ReactBSAlert
-      //     title={"Sub Location Tokens"}
-      //     onConfirm={() => hideAlert()}
-      //     onCancel={() => hideAlert()}
-      //     style={{ width: "60vw" }}
-      //   >
-      //     <SubTokens
-      //       ids={accessible_locations}
-      //       hide={() => hideAlert}
-      //       TokenDetails={() => showTokenDetail}
-      //       customer_id={customer_id}
-      //       request_approval_groups_assigned={request_approval_groups_assigned}
-      //     />
-      //   </ReactBSAlert>
-      // );
+    // set_alert(
+    //   <ReactBSAlert
+    //     title={""}
+    //     onConfirm={() => hideAlert()}
+    //     onCancel={() => hideAlert()}
+    //     style={{ width: "60vw" }}
+    //   >
+    // <TokenModal
+    //   id={id}
+    //   set_loading={(e) => set_loading(e)}
+    //   notifyMessage={notifyMessage}
+    // />
+    //   </ReactBSAlert>
+    // );
+    else
+      showAlert({
+        message: `Please click "Next" button first! If there is any pending token to serve, its details will be made available.`,
+        setAlert:set_alert,
+        severity: "error",
+        timeout: 6000,
+      });
+    // notifyMessage(
+    //   "tc",
+    //   3,
+    //   `Please click "Next" button first! If there is any pending token to serve, its details will be made available.`
+    // );
+  };
+
+  const To = () => {
+    showAlert({
+      message: (
+        <SubTokens
+          ids={accessible_locations}
+          hide={() => hideAlert}
+          TokenDetails={() => showTokenDetail}
+          customer_id={customer_id}
+          request_approval_groups_assigned={request_approval_groups_assigned}
+        />
+      ),
+      setAlert:set_alert,
+      severity: "secondary",
+      timeout: 6000,
+    });
+    // set_alert(
+    //   <ReactBSAlert
+    //     title={"Sub Location Tokens"}
+    //     onConfirm={() => hideAlert()}
+    //     onCancel={() => hideAlert()}
+    //     style={{ width: "60vw" }}
+    //   >
+    //     <SubTokens
+    //       ids={accessible_locations}
+    //       hide={() => hideAlert}
+    //       TokenDetails={() => showTokenDetail}
+    //       customer_id={customer_id}
+    //       request_approval_groups_assigned={request_approval_groups_assigned}
+    //     />
+    //   </ReactBSAlert>
+    // );
+  };
+
+  /* 6. Update Token Recall---------------------------------------------------------------------*/
+  const updateTokenRecall = async (tokenForRecall) => {
+    console.log("running updateTokenRecall()__ tokenForRecall", tokenForRecall);
+    set_loading(true);
+    set_modal_classic({ modal_classic: !modal_classic }); //TESTING_ONLY //firdous
+
+    let customerId = JSON.parse(
+      localStorage.getItem("auth_info") || "{}"
+    ).customer_id;
+    let customer_id = customerId;
+    let currDayUnixTSMinVal = curr_day_unixts_min_val;
+    let currDayUnixTSMaxVal = curr_day_unixts_max_val;
+    let selectedServingServIds = serving_services_id_list;
+
+    /* 5.1 Set currently Loaded Token as "Served" */
+
+    let params = {
+      version: "1",
+      cmd_: "C4",
+      // apiKey: api_key || "",
+      customerId: customer_id || "",
+      // mainLocId: main_location_id || "",
+      subLocId: sub_location_id || "",
+      // serviceId: service_id || "",
+      counterId: counter_id || "",
+      emailId: email || "",
+      userId: email || "",
+      userName: user_name || "",
+      // ^common params
+      //filteredServsIDList: filtered_services_id_list || [],
+      //currTokId: curr_token.id || "",
+      servingTime: curr_serv_time_HrMinSec || "",
+      tokenStatus: "Served",
+      //localTimeNow: new Date(),
+      //currDayUnixTSMaxVal: curr_day_unixts_max_val || "",
+      timeZone: time_zone || "",
+      callBasedOnServDate: call_based_on_service_date,
+      recalledToken: tokenForRecall.id,
     };
 
-    /* 6. Update Token Recall---------------------------------------------------------------------*/
-    const updateTokenRecall = async (tokenForRecall) => {
-      console.log(
-        "running updateTokenRecall()__ tokenForRecall",
-        tokenForRecall
-      );
-      set_loading(true);
-      set_modal_classic({ modal_classic: !modal_classic }); //TESTING_ONLY //firdous
+    let c4Result = await callApiHandleCounterRun({ params });
+    console.log("c4Result", c4Result);
+  };
 
-      let customerId = JSON.parse(
-        localStorage.getItem("auth_info") || "{}"
-      ).customer_id;
-      let customer_id = customerId;
-      let currDayUnixTSMinVal = curr_day_unixts_min_val;
-      let currDayUnixTSMaxVal = curr_day_unixts_max_val;
-      let selectedServingServIds = serving_services_id_list;
-
-      /* 5.1 Set currently Loaded Token as "Served" */
-
-      let params = {
-        version: "1",
-        cmd_: "C4",
-        // apiKey: api_key || "",
-        customerId: customer_id || "",
-        // mainLocId: main_location_id || "",
-        subLocId: sub_location_id || "",
-        // serviceId: service_id || "",
-        counterId: counter_id || "",
-        emailId: email || "",
-        userId: email || "",
-        userName: user_name || "",
-        // ^common params
-        //filteredServsIDList: filtered_services_id_list || [],
-        //currTokId: curr_token.id || "",
-        servingTime: curr_serv_time_HrMinSec || "",
-        tokenStatus: "Served",
-        //localTimeNow: new Date(),
-        //currDayUnixTSMaxVal: curr_day_unixts_max_val || "",
-        timeZone: time_zone || "",
-        callBasedOnServDate: call_based_on_service_date,
-        recalledToken: tokenForRecall.id,
-      };
-
-      let c4Result = await callApiHandleCounterRun({ params });
-      console.log("c4Result", c4Result);
-    };
-
-    /* 6. Check Service working hours for ALL filtered service ids in counter (based on "services_filtered_id_list")
+  /* 6. Check Service working hours for ALL filtered service ids in counter (based on "services_filtered_id_list")
                                        OR ALL serving service ids in counter (based on "serving_services_id_list")
           to add/remove all Tokens for that service from call list accordingly */
-    const checkServIDWorkHours = (e) => {
-      console.log("running (checkServIDWorkHours()__");
+  const checkServIDWorkHours = (e) => {
+    console.log("running (checkServIDWorkHours()__");
 
-      //TESTING_ONLY //right now this service id , "e" => "e9728810-6ed8-11ea-94ef-a5c6d2d68f9c" has two slots for Saturday
-      Firebase.firestore()
-        .collection("Services")
-        .doc(e)
-        .get()
-        .then((d) => {
-          var CurrentTimeISWorkingHours = false;
-          var currentHHmm = 0,
-            currentHHSplit = "",
-            currentHH = 0,
-            currentmm = 0,
-            currentHHmmSumSec = 0;
-          var callStartHHmm = 0,
-            callStartHHSplit = "",
-            callStartHH = 0,
-            callStartmm = 0,
-            callStartHHmmSumSec = 0;
-          var callEndHHmm = 0,
-            callEndHHSplit = "",
-            callEndHH = 0,
-            callEndmm = 0,
-            callEndHHmmSumSec = 0;
+    //TESTING_ONLY //right now this service id , "e" => "e9728810-6ed8-11ea-94ef-a5c6d2d68f9c" has two slots for Saturday
+    Firebase.firestore()
+      .collection("Services")
+      .doc(e)
+      .get()
+      .then((d) => {
+        var CurrentTimeISWorkingHours = false;
+        var currentHHmm = 0,
+          currentHHSplit = "",
+          currentHH = 0,
+          currentmm = 0,
+          currentHHmmSumSec = 0;
+        var callStartHHmm = 0,
+          callStartHHSplit = "",
+          callStartHH = 0,
+          callStartmm = 0,
+          callStartHHmmSumSec = 0;
+        var callEndHHmm = 0,
+          callEndHHSplit = "",
+          callEndHH = 0,
+          callEndmm = 0,
+          callEndHHmmSumSec = 0;
 
-          let TimeZone2 = d.data().TimeZone;
-          let TimeZoneParts = TimeZone2.split(")");
-          let timeZoneCurrent = TimeZoneParts[1];
+        let TimeZone2 = d.data().TimeZone;
+        let TimeZoneParts = TimeZone2.split(")");
+        let timeZoneCurrent = TimeZoneParts[1];
 
-          //var timeZoneCurrent = d.data().TimeZone; //d.data().TimeZone; //b.time_zone; // "(UTC+05:00)Indian/Maldives" ().TimeZone",b.docs().TimeZone);
-          var weekDayForCurrentTimeZone = moment(new Date())
-            .tz(timeZoneCurrent)
-            .format("dddd"); //output format: "Thursday"
-          var ServiceDays = d.data().Service_Days || 0; //d.data().Service_Days; //b.service_days;
-          var ServiceDaysLength = ServiceDays.length;
+        //var timeZoneCurrent = d.data().TimeZone; //d.data().TimeZone; //b.time_zone; // "(UTC+05:00)Indian/Maldives" ().TimeZone",b.docs().TimeZone);
+        var weekDayForCurrentTimeZone = moment(new Date())
+          .tz(timeZoneCurrent)
+          .format("dddd"); //output format: "Thursday"
+        var ServiceDays = d.data().Service_Days || 0; //d.data().Service_Days; //b.service_days;
+        var ServiceDaysLength = ServiceDays.length;
 
-          if (
-            ServiceDays != null &&
-            ServiceDays != "" &&
-            ServiceDays != undefined &&
-            ServiceDaysLength >= 1
-          ) {
-            //&& d.id == "e9728810-6ed8-11ea-94ef-a5c6d2d68f9c"){
-            var i = 0;
-            while (
-              CurrentTimeISWorkingHours == false &&
-              i < ServiceDaysLength
-            ) {
-              if (ServiceDays[i].week_day === weekDayForCurrentTimeZone) {
-                //for eg: this will only loop through "Saturday" elements only
+        if (
+          ServiceDays != null &&
+          ServiceDays != "" &&
+          ServiceDays != undefined &&
+          ServiceDaysLength >= 1
+        ) {
+          //&& d.id == "e9728810-6ed8-11ea-94ef-a5c6d2d68f9c"){
+          var i = 0;
+          while (CurrentTimeISWorkingHours == false && i < ServiceDaysLength) {
+            if (ServiceDays[i].week_day === weekDayForCurrentTimeZone) {
+              //for eg: this will only loop through "Saturday" elements only
 
-                currentHHmm = moment(new Date())
-                  .tz(timeZoneCurrent)
-                  .format("HH:mm")
-                  .toString(); //output format: "19:40" for 7:40pm in 24hr format
-                currentHHSplit = currentHHmm.split(":");
-                currentHH = parseInt(currentHHSplit[0], 10); //output format: HH
-                currentmm = parseInt(currentHHSplit[1], 10); //output format: mmoutput format: mm
-                currentHHmmSumSec = parseInt(
-                  currentHH * 60 + currentmm * 1,
-                  10
-                ); //output format: s
+              currentHHmm = moment(new Date())
+                .tz(timeZoneCurrent)
+                .format("HH:mm")
+                .toString(); //output format: "19:40" for 7:40pm in 24hr format
+              currentHHSplit = currentHHmm.split(":");
+              currentHH = parseInt(currentHHSplit[0], 10); //output format: HH
+              currentmm = parseInt(currentHHSplit[1], 10); //output format: mmoutput format: mm
+              currentHHmmSumSec = parseInt(currentHH * 60 + currentmm * 1, 10); //output format: s
 
-                callStartHHmm = ServiceDays[i].call_start_time.toString(); //moment(new Date()).tz(timeZoneCurrent).format("HH:mm");
-                callStartHHSplit = callStartHHmm.split(":");
-                callStartHH = parseInt(callStartHHSplit[0], 10); //output format: HH
-                callStartmm = parseInt(callStartHHSplit[1], 10); //output format: mm
-                callStartHHmmSumSec = parseInt(
-                  callStartHH * 60 + callStartmm * 1,
-                  10
-                ); //output format: s
+              callStartHHmm = ServiceDays[i].call_start_time.toString(); //moment(new Date()).tz(timeZoneCurrent).format("HH:mm");
+              callStartHHSplit = callStartHHmm.split(":");
+              callStartHH = parseInt(callStartHHSplit[0], 10); //output format: HH
+              callStartmm = parseInt(callStartHHSplit[1], 10); //output format: mm
+              callStartHHmmSumSec = parseInt(
+                callStartHH * 60 + callStartmm * 1,
+                10
+              ); //output format: s
 
-                callEndHHmm = ServiceDays[i].call_end_time.toString(); //moment(new Date()).tz(timeZoneCurrent).format("HH:mm");
-                callEndHHSplit = callEndHHmm.split(":");
-                callEndHH = parseInt(callEndHHSplit[0], 10); //output format: HH
-                callEndmm = parseInt(callEndHHSplit[1], 10); //output format: mm
-                callEndHHmmSumSec = parseInt(
-                  callEndHH * 60 + callEndmm * 1,
-                  10
-                ); //output format: s
+              callEndHHmm = ServiceDays[i].call_end_time.toString(); //moment(new Date()).tz(timeZoneCurrent).format("HH:mm");
+              callEndHHSplit = callEndHHmm.split(":");
+              callEndHH = parseInt(callEndHHSplit[0], 10); //output format: HH
+              callEndmm = parseInt(callEndHHSplit[1], 10); //output format: mm
+              callEndHHmmSumSec = parseInt(callEndHH * 60 + callEndmm * 1, 10); //output format: s
 
-                if (
-                  //TESTING_ONLY firdous urgent
-                  currentHHmmSumSec > callStartHHmmSumSec &&
-                  currentHHmmSumSec < callEndHHmmSumSec
-                ) {
-                  //--> WITHIN CALL_START_TIME AND CALL_END_TIME RANGE
-                  CurrentTimeISWorkingHours = true;
-                  return true; //TESTING_ONLY
-                } /*if (currentHHmmSumSec < callStartHHmmSumSec || currentHHmmSumSec > callEndHHmmSumSec)*/ else {
-                  //--> NOT WITHIN CALL_START_TIME AND CALL_END_TIME RANGE
-                  CurrentTimeISWorkingHours = false;
-                  return false;
-                }
+              if (
+                //TESTING_ONLY firdous urgent
+                currentHHmmSumSec > callStartHHmmSumSec &&
+                currentHHmmSumSec < callEndHHmmSumSec
+              ) {
+                //--> WITHIN CALL_START_TIME AND CALL_END_TIME RANGE
+                CurrentTimeISWorkingHours = true;
+                return true; //TESTING_ONLY
+              } /*if (currentHHmmSumSec < callStartHHmmSumSec || currentHHmmSumSec > callEndHHmmSumSec)*/ else {
+                //--> NOT WITHIN CALL_START_TIME AND CALL_END_TIME RANGE
+                CurrentTimeISWorkingHours = false;
+                return false;
               }
-              i++;
             }
+            i++;
+          }
 
-            if (CurrentTimeISWorkingHours == true) {
-              var tempNotWorkingServIDs1 = [...temp_disabled_working_serv_ids];
-              console.log(
-                "tempNotWorkingServIDs1 COPYA",
-                tempNotWorkingServIDs1
-              );
-              if (tempNotWorkingServIDs1 != "undefined") {
-                for (var h = 0; h < tempNotWorkingServIDs1.length; h++) {
-                  if (tempNotWorkingServIDs1[hour_val] === e) {
-                    tempNotWorkingServIDs1.splice(hour_val, 1);
-                  }
-                }
-                set_temp_disabled_working_serv_ids(tempNotWorkingServIDs1);
-              }
-              console.log(
-                "...temp_disabled_working_serv_ids COPYA",
-                ...temp_disabled_working_serv_ids
-              );
-              console.log(
-                "NEW mappedServceIds && workingHours FALSE .. for service e",
-                e
-              );
-              return true;
-            } else if (CurrentTimeISWorkingHours == false) {
-              var tempNotWorkingServIDs2 = [...temp_disabled_working_serv_ids];
-              console.log(
-                "tempNotWorkingServIDs2 COPYB",
-                tempNotWorkingServIDs2
-              );
-              if (tempNotWorkingServIDs2 != "undefined") {
-                if (tempNotWorkingServIDs2.includes(e) == false) {
-                  tempNotWorkingServIDs2.push(e);
-                  set_temp_disabled_working_serv_ids(tempNotWorkingServIDs2);
+          if (CurrentTimeISWorkingHours == true) {
+            var tempNotWorkingServIDs1 = [...temp_disabled_working_serv_ids];
+            console.log("tempNotWorkingServIDs1 COPYA", tempNotWorkingServIDs1);
+            if (tempNotWorkingServIDs1 != "undefined") {
+              for (var h = 0; h < tempNotWorkingServIDs1.length; h++) {
+                if (tempNotWorkingServIDs1[hour_val] === e) {
+                  tempNotWorkingServIDs1.splice(hour_val, 1);
                 }
               }
-              console.log(
-                "...temp_disabled_working_serv_ids COPYB",
-                ...temp_disabled_working_serv_ids
-              );
-              console.log(
-                "NEW mappedServceIds && workingHours FALSE .. for service e",
-                e
-              );
-              return false;
-            }
-          } else {
-            CurrentTimeISWorkingHours = true;
-
-            var tempNotWorkingServIDs3 = [...temp_disabled_working_serv_ids];
-            console.log("tempNotWorkingServIDs3 COPYC", tempNotWorkingServIDs3);
-            if (tempNotWorkingServIDs3 != "undefined") {
-              if (tempNotWorkingServIDs3.includes(e) == false) {
-                for (var j = 0; j < tempNotWorkingServIDs3.length; j++) {
-                  if (tempNotWorkingServIDs3[j] === e) {
-                    tempNotWorkingServIDs3.splice(j, 1);
-                  }
-                }
-                set_temp_disabled_working_serv_ids(tempNotWorkingServIDs3);
-              }
+              set_temp_disabled_working_serv_ids(tempNotWorkingServIDs1);
             }
             console.log(
-              "...temp_disabled_working_serv_ids COPYC",
+              "...temp_disabled_working_serv_ids COPYA",
               ...temp_disabled_working_serv_ids
             );
             console.log(
@@ -1645,132 +1593,142 @@ function CounterRun(props) {
               e
             );
             return true;
-          }
-        });
-    };
-
-    const handleChangeCounterState = async (newValue, actionMeta) => {
-      let customer_id = JSON.parse(
-        localStorage.getItem("auth_info") || "{}"
-      ).customer_id;
-
-      let counterStateCharLimit = counter_state_char_limit;
-      let defaultCounterState = default_counter_state;
-      let defaultCounterStates = default_counter_states; //TESTING_ONLY
-      let customCounterStates = custom_counter_states; //TESTING_ONLY
-      let customCounterStatesValues = customCounterStates.map((prop, key) => {
-        return prop.value;
-      });
-      let combinedCounterStates = combined_counter_states; //TESTING_ONLY
-      let combinedCounterStatesValues = combinedCounterStates.map(
-        (prop, key) => {
-          return prop.value;
-        }
-      );
-
-      console.group("Value Changed");
-      console.log(newValue);
-      console.log(`action: ${actionMeta.action}`);
-      console.groupEnd();
-
-      //console.log("newValue", newValue, "actionMeta.action", actionMeta.action)
-
-      console.log("defaultCounterStates", defaultCounterStates);
-      console.log("customCounterStates", customCounterStates);
-      console.log("customCounterStatesValues", customCounterStatesValues);
-      console.log("combinedCounterStates", combinedCounterStates);
-      console.log("combinedCounterStatesValues", combinedCounterStatesValues);
-
-      //-- so will move that section to the cloud fucntion file, new means new value, else update the counter value
-      if (newValue) {
-        const { __isNew__, value } = newValue;
-
-        if (__isNew__ === true) {
-          if (combinedCounterStatesValues.includes(value) === false) {
-            if (value.length <= counterStateCharLimit) {
-              console.log("taking __isNew__ TRUE path1");
-              combinedCounterStates.push({ label: value, value: value });
-              combinedCounterStatesValues.push(value);
-              customCounterStatesValues.push(value);
-              set_combined_counter_states(combinedCounterStates);
-
-              set_counter_state({ label: value, value: value });
-
-              console.log(
-                "customCounterStatesValues",
-                customCounterStatesValues
-              );
-
-              let params = {
-                version: "1",
-                cmd_: "C6",
-                // apiKey: api_key || "",
-                customerId: customer_id || "",
-                // mainLocId: main_location_id || "",
-                subLocId: sub_location_id || "",
-                // serviceId: service_id || "",
-                counterId: counter_id || "",
-                emailId: email || "",
-                userId: email || "",
-                userName: user_name || "",
-                // ^common params
-                value: value,
-                customCounterStatesValues: customCounterStatesValues,
-                newVal: "1",
-              };
-
-              let c6Result = await callApiHandleCounterRun({ params });
-              console.log("c6Result", c6Result);
-            } else {
-              showAlert({
-                message: `Sorry, new "Counter State" text must less than ${counterStateCharLimit} chars!`,
-                set_alert,
-                severity: "error",
-                timeout: 6000,
-              });
-              // notifyMessage(
-              //   "tc",
-              //   3,
-              //   `Sorry, new "Counter State" text must less than ${counterStateCharLimit} chars!`
-              // );
+          } else if (CurrentTimeISWorkingHours == false) {
+            var tempNotWorkingServIDs2 = [...temp_disabled_working_serv_ids];
+            console.log("tempNotWorkingServIDs2 COPYB", tempNotWorkingServIDs2);
+            if (tempNotWorkingServIDs2 != "undefined") {
+              if (tempNotWorkingServIDs2.includes(e) == false) {
+                tempNotWorkingServIDs2.push(e);
+                set_temp_disabled_working_serv_ids(tempNotWorkingServIDs2);
+              }
             }
-          } else {
-            //do nothing, this part doesn"t execute anyway due to ui validation
-            console.log("taking __isNew__ TRUE path2");
+            console.log(
+              "...temp_disabled_working_serv_ids COPYB",
+              ...temp_disabled_working_serv_ids
+            );
+            console.log(
+              "NEW mappedServceIds && workingHours FALSE .. for service e",
+              e
+            );
+            return false;
           }
         } else {
-          console.log("taking __isNew__ FALSE path");
+          CurrentTimeISWorkingHours = true;
 
-          set_counter_state({ label: value, value: value });
+          var tempNotWorkingServIDs3 = [...temp_disabled_working_serv_ids];
+          console.log("tempNotWorkingServIDs3 COPYC", tempNotWorkingServIDs3);
+          if (tempNotWorkingServIDs3 != "undefined") {
+            if (tempNotWorkingServIDs3.includes(e) == false) {
+              for (var j = 0; j < tempNotWorkingServIDs3.length; j++) {
+                if (tempNotWorkingServIDs3[j] === e) {
+                  tempNotWorkingServIDs3.splice(j, 1);
+                }
+              }
+              set_temp_disabled_working_serv_ids(tempNotWorkingServIDs3);
+            }
+          }
+          console.log(
+            "...temp_disabled_working_serv_ids COPYC",
+            ...temp_disabled_working_serv_ids
+          );
+          console.log(
+            "NEW mappedServceIds && workingHours FALSE .. for service e",
+            e
+          );
+          return true;
+        }
+      });
+  };
 
-          let params = {
-            version: "1",
-            cmd_: "C6",
-            // apiKey: api_key || "",
-            customerId: customer_id || "",
-            // mainLocId: main_location_id || "",
-            subLocId: sub_location_id || "",
-            // serviceId: service_id || "",
-            counterId: counter_id || "",
-            emailId: email || "",
-            userId: email || "",
-            userName: user_name || "",
-            // ^common params
-            value: value,
-            newVal: "0",
-            customCounterStatesValues: customCounterStatesValues,
-          };
+  const handleChangeCounterState = async (newValue, actionMeta) => {
+    let customer_id = JSON.parse(
+      localStorage.getItem("auth_info") || "{}"
+    ).customer_id;
 
-          let c6Result = await callApiHandleCounterRun({ params });
-          // console.log("c6Result", c6Result);
+    let counterStateCharLimit = counter_state_char_limit;
+    let defaultCounterState = default_counter_state;
+    let defaultCounterStates = default_counter_states; //TESTING_ONLY
+    let customCounterStates = custom_counter_states; //TESTING_ONLY
+    let customCounterStatesValues = customCounterStates.map((prop, key) => {
+      return prop.value;
+    });
+    let combinedCounterStates = combined_counter_states; //TESTING_ONLY
+    let combinedCounterStatesValues = combinedCounterStates.map((prop, key) => {
+      return prop.value;
+    });
+
+    console.group("Value Changed");
+    console.log(newValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+
+    //console.log("newValue", newValue, "actionMeta.action", actionMeta.action)
+
+    console.log("defaultCounterStates", defaultCounterStates);
+    console.log("customCounterStates", customCounterStates);
+    console.log("customCounterStatesValues", customCounterStatesValues);
+    console.log("combinedCounterStates", combinedCounterStates);
+    console.log("combinedCounterStatesValues", combinedCounterStatesValues);
+
+    //-- so will move that section to the cloud fucntion file, new means new value, else update the counter value
+    if (newValue) {
+      const { __isNew__, value } = newValue;
+
+      if (__isNew__ === true) {
+        if (combinedCounterStatesValues.includes(value) === false) {
+          if (value.length <= counterStateCharLimit) {
+            console.log("taking __isNew__ TRUE path1");
+            combinedCounterStates.push({ label: value, value: value });
+            combinedCounterStatesValues.push(value);
+            customCounterStatesValues.push(value);
+            set_combined_counter_states(combinedCounterStates);
+
+            set_counter_state({ label: value, value: value });
+
+            console.log("customCounterStatesValues", customCounterStatesValues);
+
+            let params = {
+              version: "1",
+              cmd_: "C6",
+              // apiKey: api_key || "",
+              customerId: customer_id || "",
+              // mainLocId: main_location_id || "",
+              subLocId: sub_location_id || "",
+              // serviceId: service_id || "",
+              counterId: counter_id || "",
+              emailId: email || "",
+              userId: email || "",
+              userName: user_name || "",
+              // ^common params
+              value: value,
+              customCounterStatesValues: customCounterStatesValues,
+              newVal: "1",
+            };
+
+            let c6Result = await callApiHandleCounterRun({ params });
+            console.log("c6Result", c6Result);
+          } else {
+            showAlert({
+              message: `Sorry, new "Counter State" text must less than ${counterStateCharLimit} chars!`,
+              setAlert:set_alert,
+              severity: "error",
+              timeout: 6000,
+            });
+            // notifyMessage(
+            //   "tc",
+            //   3,
+            //   `Sorry, new "Counter State" text must less than ${counterStateCharLimit} chars!`
+            // );
+          }
+        } else {
+          //do nothing, this part doesn"t execute anyway due to ui validation
+          console.log("taking __isNew__ TRUE path2");
         }
       } else {
-        console.log("taking actionMeta.action == 'clear' path");
+        console.log("taking __isNew__ FALSE path");
 
-        set_counter_state({
-          label: defaultCounterState,
-          value: defaultCounterState,
-        });
+        set_counter_state({ label: value, value: value });
+
         let params = {
           version: "1",
           cmd_: "C6",
@@ -1784,7 +1742,7 @@ function CounterRun(props) {
           userId: email || "",
           userName: user_name || "",
           // ^common params
-          value: defaultCounterState,
+          value: value,
           newVal: "0",
           customCounterStatesValues: customCounterStatesValues,
         };
@@ -1792,994 +1750,1023 @@ function CounterRun(props) {
         let c6Result = await callApiHandleCounterRun({ params });
         // console.log("c6Result", c6Result);
       }
+    } else {
+      console.log("taking actionMeta.action == 'clear' path");
+
+      set_counter_state({
+        label: defaultCounterState,
+        value: defaultCounterState,
+      });
+      let params = {
+        version: "1",
+        cmd_: "C6",
+        // apiKey: api_key || "",
+        customerId: customer_id || "",
+        // mainLocId: main_location_id || "",
+        subLocId: sub_location_id || "",
+        // serviceId: service_id || "",
+        counterId: counter_id || "",
+        emailId: email || "",
+        userId: email || "",
+        userName: user_name || "",
+        // ^common params
+        value: defaultCounterState,
+        newVal: "0",
+        customCounterStatesValues: customCounterStatesValues,
+      };
+
+      let c6Result = await callApiHandleCounterRun({ params });
+      // console.log("c6Result", c6Result);
+    }
+  };
+
+  const handleFilters = (filterdServList) => {
+    console.log("running handleFilters()__ filterdServList", filterdServList); //TESTING_FUNCTIONAL
+    let now = new Date();
+    let currFirestoreTS = Firebase.firestore.FieldValue.serverTimestamp(); //new Date();
+    Firebase.firestore()
+      .collection("Counters")
+      .doc(counter_id)
+      .update({
+        Filtered_Services: services_list
+          ?.map((e) => e?.id)
+          ?.filter((e) => filterdServList?.includes(e)),
+        Last_Updated_Firestore_Timestamp: currFirestoreTS,
+        Updated_Date: now,
+        Blink: false,
+      })
+      .then(() => {
+        //console.log("success!");
+      })
+      .catch((error) => {
+        console.error("handleFilters error: ", error);
+      });
+  };
+
+  const handleNoShowToken = async () => {
+    set_loading(true);
+
+    let params = {
+      version: "1",
+      cmd_: "C2",
+      subLocId: sub_location_id || "",
+      counterId: counter_id || "",
+      emailId: email || "",
+      userId: email || "",
+      userName: user_name || "",
+      servingTime: curr_serv_time_HrMinSec || "",
+      tokenStatus: "No_Show",
+      timeZone: time_zone || "",
+      callBasedOnServDate: call_based_on_service_date,
     };
 
-    const handleFilters = (filterdServList) => {
-      console.log("running handleFilters()__ filterdServList", filterdServList); //TESTING_FUNCTIONAL
-      let now = new Date();
-      let currFirestoreTS = Firebase.firestore.FieldValue.serverTimestamp(); //new Date();
-      Firebase.firestore()
-        .collection("Counters")
-        .doc(counter_id)
-        .update({
-          Filtered_Services: services_list
-            ?.map((e) => e?.id)
-            ?.filter((e) => filterdServList?.includes(e)),
-          Last_Updated_Firestore_Timestamp: currFirestoreTS,
-          Updated_Date: now,
-          Blink: false,
-        })
-        .then(() => {
-          //console.log("success!");
-        })
-        .catch((error) => {
-          console.error("handleFilters error: ", error);
-        });
-    };
+    let c2Result = await callApiHandleCounterRun({ params });
+  };
 
-    const handleNoShowToken = async () => {
-      set_loading(true);
+  const handleRepeatToken = async () => {
+    console.log("running handleRepeatToken()__ curr_token", curr_token);
+    let currTokNum = curr_token.number || -1;
+    if (currTokNum !== -1) {
+      // Firebase.functions().useFunctionsEmulator("http://localhost:5000")
+      let params = {
+        version: "1",
+        cmd_: "C3",
+        // apiKey: api_key || "",
+        customerId: customer_id || "",
+        // mainLocId: main_location_id || "",
+        subLocId: sub_location_id || "",
+        // serviceId: service_id || "",
+        counterId: counter_id || "",
+        emailId: email || "",
+        userId: email || "",
+        userName: user_name || "",
+        // ^common params
+        tokenId: curr_token.id || "",
+      };
+
+      let c3Result = await callApiHandleCounterRun({ params });
+      console.log("c3Result", c3Result);
+    } else {
+      showAlert({
+        message: "No token currently loaded!",
+        setAlert:set_alert,
+        severity: "error",
+        timeout: 6000,
+      });
+      // notifyMessage("tc", 3, "No token currently loaded!");
+    }
+  };
+
+  const handleRecallToken = () => {
+    loadTokenDetails(); //TESTING_ONLY
+  };
+
+  const toggleModalClassic = (/*title, body*/) => {
+    set_loading(false);
+    //set_modalTitle(title);
+    //set_modalBody(body);
+    set_modal_classic(!modal_classic); //TESTING_ONLY //firdous
+  };
+
+  const loadTokenDetails = async (tokSearchNum) => {
+    //let token_details_list = [];
+    let i = 0;
+
+    let startDateFmt = start_date_formatted;
+    let endDateFmt = end_date_formatted;
+    // startDateFmt = startDateFmt; //parseInt(moment(startDateFmt, "YYYY-MM-DD").unix());
+    // endDateFmt = endDateFmt; //parseInt(moment(endDateFmt, "YYYY-MM-DD").unix()) + 86400; //number of seconds in a day
+    console.log("startDateFmt", startDateFmt, "endDateFmt", endDateFmt);
+
+    let selectedMainLocId = main_location_id;
+    let selectedSubLocId = sub_location_id;
+    let selectedServingServIds = serving_services_id_list;
+    //let selected_token_statuses = selected_token_statuses;
+
+    if (
+      selectedMainLocId !== null &&
+      selectedSubLocId !== null &&
+      selectedServingServIds !== null &&
+      selectedServingServIds.length > 0
+    ) {
+      let response;
 
       let params = {
         version: "1",
-        cmd_: "C2",
+        cmd_: "C7",
+        // apiKey: api_key || "",
+        customerId: customer_id || "",
+        mainLocId: main_location_id || "",
+        subLocId: sub_location_id || "",
+        // serviceId: service_id || "",
+        counterId: counter_id || "",
+        emailId: email || "",
+        userId: email || "",
+        userName: user_name || "",
+        // ^common params
+        startDateFmt: startDateFmt,
+        endDateFmt: endDateFmt,
+        // selectedMainLocId: selectedMainLocId,
+        // selectedSubLocId: selectedSubLocId,
+        tokSearchNum: tokSearchNum || "",
+        selectedServingServIds: selectedServingServIds,
+      };
+
+      let c3Result = await callApiHandleCounterRun({ params });
+      // console.log("c3Result", c3Result);
+
+      // callApiHandleCounterRun({ params }).then((e) => {
+      if (c3Result != undefined && c3Result.result != undefined) {
+        console.log(c3Result.result);
+        set_token_details_list([]);
+        set_token_details_list(c3Result.result);
+        set_loading(false);
+        if (
+          tokSearchNum == "" ||
+          tokSearchNum == undefined ||
+          tokSearchNum == null
+        ) {
+          toggleModalClassic();
+
+          //no action to be taken (modal already visible)
+        } else {
+          //show modal
+          // toggleModalClassic(modalTitle1, modalBody1); //TESTING_ONLY firdous urgent
+        }
+      }
+    } else if (selectedMainLocId === null || selectedSubLocId === null) {
+      showAlert({
+        message: "Main location or Sub location not correctly loaded!",
+        setAlert:set_alert,
+        severity: "error",
+        timeout: 6000,
+      });
+      // notifyMessage(
+      //   "tc",
+      //   3,
+      //   "Main location or Sub location not correctly loaded!"
+      // );
+      set_loading(false);
+      console.log({
+        selectedMainLocId: selectedMainLocId,
+        selectedSubLocId: selectedSubLocId,
+        selectedServingServIds: selectedServingServIds,
+        selected_servicesLength: selectedServingServIds.length,
+      });
+    } else if (
+      selectedServingServIds === null ||
+      typeof selectedServingServIds.length === "undefined" ||
+      selectedServingServIds.length <= 0
+    ) {
+      showAlert({
+        message:
+          "You must set Serving Services so as to include those services in the search!",
+        setAlert:set_alert,
+        severity: "error",
+        timeout: 6000,
+      });
+      // notifyMessage(
+      //   "tc",
+      //   3,
+      //   "You must set Serving Services so as to include those services in the search!"
+      // );
+      set_loading(false);
+      console.log({
+        selectedMainLocId: selectedMainLocId,
+        selectedSubLocId: selectedSubLocId,
+        selectedServingServIds: selectedServingServIds,
+        selected_servicesLength: selectedServingServIds.length,
+      });
+    }
+  };
+
+  const formatTokenStatus = (str) => {
+    var splitStr = str.toLowerCase().split("_");
+    for (var i = 0; i < splitStr.length; i++) {
+      //for (var i = 0, len = splitStr.length; i < len i++) {
+      splitStr[i] =
+        splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    return splitStr.join(" ");
+  };
+
+  useEffect(() => {
+    getTokenDetails();
+  }, [modal_classic]);
+
+  const getTokenDetails = () => {
+    let data = [];
+    if (typeof token_details_list == "object")
+      token_details_list.map((prop, key) => {
+        let inputSource = "";
+        if (prop.input_source === "Android_Dispenser_API") {
+          inputSource = "Dispenser";
+        } else if (prop.input_source === "Mobile_App") {
+          inputSource = "Mobile";
+        } else if (prop.input_source === "Web_Interface") {
+          inputSource = "Web";
+        }
+
+        let input_source_content;
+        if (
+          prop.input_source === "Android_Dispenser_API" ||
+          prop.input_source === "Web_Interface"
+        ) {
+          input_source_content = (
+            <span className="badge badge-pill badge-info">{inputSource}</span>
+          );
+        } else {
+          input_source_content = (
+            <span className="badge badge-pill badge-success">
+              {inputSource}
+            </span>
+          );
+        }
+
+        let mau_details_content;
+        if (
+          typeof prop.mau_id !== "undefined" &&
+          prop.mau_id !== null &&
+          prop.mau_id !== ""
+        ) {
+          mau_details_content =
+            prop.mau_name + " / " + prop.mau_email + " / " + prop.mau_contact;
+        } else {
+          mau_details_content = "N/A";
+        }
+
+        let tokStatus = "";
+        tokStatus = formatTokenStatus(prop.token_status);
+
+        let tokenStatusComponent;
+
+        if (
+          prop.token_status === "Closed" ||
+          prop.token_status === "Cancelled" ||
+          prop.token_status === "No_show" ||
+          prop.token_status === "No_Show" ||
+          prop.token_status === "Rejected"
+        ) {
+          tokenStatusComponent = (
+            <span className="badge badge-pill badge-danger">{tokStatus}</span>
+          );
+        } else {
+          if (
+            prop.token_status === "Pending" ||
+            prop.token_status === "Pending_Approval"
+          ) {
+            tokenStatusComponent = (
+              <span className="badge badge-pill badge-warning">
+                {tokStatus}
+              </span>
+            );
+          } else {
+            if (
+              prop.token_status === "Now_Serving" ||
+              prop.token_status === "Approved_Pending_Service"
+            ) {
+              tokenStatusComponent = (
+                <span className="badge badge-pill badge-info">{tokStatus}</span>
+              );
+            } else {
+              if (prop.token_status === "Served") {
+                tokenStatusComponent = (
+                  <span className="badge badge-pill badge-success">
+                    {tokStatus}
+                  </span>
+                );
+              } else {
+                tokenStatusComponent = (
+                  <span className="badge badge-pill badge-default">
+                    {tokStatus}
+                  </span>
+                );
+              }
+            }
+          }
+        }
+
+        let action_content;
+        action_content = (
+          <Button
+            size="xs"
+            className="btn btn-primary btn-sm"
+            color="danger"
+            onClick={() => updateTokenRecall(prop)}
+          >
+            Recall Token
+          </Button>
+        );
+
+        data.push({
+          num: key + 1,
+          id: key + 1,
+          serv_name: prop.serv_name,
+          token_num: prop.token_num,
+          new_tok_ref_num: prop.new_tok_ref_num,
+          input_source: input_source_content,
+          mau_details: mau_details_content,
+          token_status: tokenStatusComponent,
+          action: action_content,
+        });
+      });
+
+    setTokenData(data);
+    return data;
+  };
+
+  const handleTokenSearch = () => {
+    let tokSearchTerm = token_search_term;
+    let tokSearchNum = "";
+    // console.log("tokSearchTerm.replace(/s/g, '').length", tokSearchTerm.replace(/\s/g, "").length);
+    if (
+      tokSearchTerm !== undefined &&
+      tokSearchTerm.replace(/\s/g, "").length !== 0
+    ) {
+      tokSearchNum = token_search_term.toString();
+    } else {
+      tokSearchNum = "";
+    }
+
+    // console.log("tokSearchNum", tokSearchNum);
+    loadTokenDetails(tokSearchNum);
+  };
+
+  const handleTokenSearchClear = () => {
+    set_token_search_term("");
+  };
+
+  // const notifyMessage = (place, color, text) => {
+  //   var type;
+
+  //   switch (color) {
+  //     case 1:
+  //       type = "primary";
+  //       break;
+  //     case 2:
+  //       type = "success";
+  //       break;
+  //     case 3:
+  //       type = "danger";
+  //       break;
+  //     case 4:
+  //       type = "warning";
+  //       break;
+  //     case 5:
+  //       type = "info";
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   var options = {};
+  //   options = {
+  //     place: place,
+  //     message: (
+  //       <div className="text-md-center">
+  //         <div>
+  //           <b>{text}</b>
+  //         </div>
+  //       </div>
+  //     ),
+  //     type: type,
+  //     icon: "now-ui-icons ui-1_bell-53",
+  //     autoDismiss: 3,
+  //   };
+
+  //   if (notifyAlert !== null && notifyAlert.current != null) {
+  //     // notificationAlert.notificationAlert(options);
+  //     notifyAlert.current.notificationAlert(options);
+  //   }
+  // };
+  async function serviceDetUpdate(type = "counter_run") {
+    let params = {
+        version: "1",
+        cmd_: "C8",
+        customerId: customer_id || "",
+        mainLocId: main_location_id || "",
         subLocId: sub_location_id || "",
         counterId: counter_id || "",
         emailId: email || "",
         userId: email || "",
         userName: user_name || "",
-        servingTime: curr_serv_time_HrMinSec || "",
-        tokenStatus: "No_Show",
         timeZone: time_zone || "",
-        callBasedOnServDate: call_based_on_service_date,
+        refAction: type,
+      },
+      c8Result;
+    c8Result = await callApiHandleCounterRun({ params });
+  }
+
+  const getServices = (e) => {
+    return services_list.map((prop, key) => {
+      return (
+        <tr key={key}>
+          <td>{prop.name}</td>
+          <td>{prop.serv_last_called_tok}</td>
+          <td>{prop.pending}</td>
+          {call_specific_service == true ? (
+            <td>
+              <Col
+                md="2"
+                xs="2"
+                data-id={prop.id}
+                className="service text-center"
+              >
+                <FormGroup switch>
+                  <Input
+                    type="switch"
+                    defaultValue={
+                      filtered_services_id_list.includes(prop.id) ? true : false
+                    } //{false}
+                    checked={
+                      filtered_services_id_list.includes(prop.id) ? true : false
+                    }
+                    offColor="success"
+                    offText="OFF"
+                    onColor="success"
+                    onText="ON"
+                    onChange={({ target: { value } }) => {
+                      {
+                        /* console.log(prop); */
+                      }
+                      var filteredServList = [];
+                      if (value) {
+                        filteredServList = [
+                          ...filtered_services_id_list,
+                          prop.id,
+                        ];
+                        set_filtered_services_id_list(filteredServList); //TESTING_FUNCTIONAL
+                      } else {
+                        filteredServList = filtered_services_id_list.filter(
+                          (item) => item != prop.id
+                        );
+                        set_filtered_services_id_list(filteredServList); //TESTING_FUNCTIONAL
+                      }
+
+                      serviceDetUpdate();
+                      set_filterLatency(0);
+                      fil1 = 0;
+                      handleFilters(filteredServList);
+                    }}
+                  />
+                </FormGroup>
+              </Col>
+            </td>
+          ) : null}
+          {generate_token_for_specific_service == true ? (
+            <td>
+              <div className="d-flex gap-2 justify-content-md-center" data-id={prop.id}>
+                <Button
+                  size="xs"
+                  className="col-8 text-white"
+                  color="info"
+                  onClick={() => handleGenerateNewTokenNum(prop.id)}
+                >
+                  NEW TOKEN
+                </Button>
+                {modify_service_details_for_display == true ? (
+                  <ServiceModalBtn
+                    service={prop}
+                    serviceDetailsForDisplays={sublocationServicesDetails}
+                    btnDisabled={!!prop?.serviceDetailsForDisplaysToggle}
+                    serviceRef={Firebase.firestore()
+                      .collection("Services")
+                      .doc(prop?.id)}
+                    sublocationRef={Firebase.firestore()
+                      .collection("Sub_Locations")
+                      .doc(prop?.sub_location_id)}
+                    serviceDetUpdate={() => {
+                      serviceDetUpdate();
+                      set_filterLatency(3);
+                      fil1 = 0;
+                    }}
+                  />
+                ) : null}
+              </div>
+            </td>
+          ) : null}
+        </tr>
+      );
+    });
+  };
+
+  const handleGenerateNewTokenNum = (serviceId) => {
+    console.log("running handleGenerateNewTokenNum()__ serviceId", serviceId);
+
+    var email = JSON.parse(localStorage.getItem("auth_info") || "{}").email;
+
+    let apiKey = 8700077; //"LNBqORi";     //ApiKey            || "";
+    let subLocId = sub_location_id; //SubLocId          || "";
+    let mainLocId = main_location_id; //MainLocId         || "";
+
+    let currentUser = Firebase.auth().currentUser;
+    currentUser.getIdToken().then(function (token) {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       };
 
-      let c2Result = await callApiHandleCounterRun({ params });
-    };
-
-    const handleRepeatToken = async () => {
-      console.log("running handleRepeatToken()__ curr_token", curr_token);
-      let currTokNum = curr_token.number || -1;
-      if (currTokNum !== -1) {
-        // Firebase.functions().useFunctionsEmulator("http://localhost:5000")
-        let params = {
-          version: "1",
-          cmd_: "C3",
-          // apiKey: api_key || "",
-          customerId: customer_id || "",
-          // mainLocId: main_location_id || "",
-          subLocId: sub_location_id || "",
-          // serviceId: service_id || "",
-          counterId: counter_id || "",
-          emailId: email || "",
-          userId: email || "",
-          userName: user_name || "",
-          // ^common params
-          tokenId: curr_token.id || "",
-        };
-
-        let c3Result = await callApiHandleCounterRun({ params });
-        console.log("c3Result", c3Result);
-      } else {
-        showAlert({
-          message: "No token currently loaded!",
-          set_alert,
-          severity: "error",
-          timeout: 6000,
-        });
-        // notifyMessage("tc", 3, "No token currently loaded!");
-      }
-    };
-
-    const handleRecallToken = () => {
-      loadTokenDetails(); //TESTING_ONLY
-    };
-
-    const toggleModalClassic = (/*title, body*/) => {
-      set_loading(false);
-      //set_modalTitle(title);
-      //set_modalBody(body);
-      set_modal_classic(!modal_classic); //TESTING_ONLY //firdous
-    };
-
-    const loadTokenDetails = async (tokSearchNum) => {
-      //let token_details_list = [];
-      let i = 0;
-
-      let startDateFmt = start_date_formatted;
-      let endDateFmt = end_date_formatted;
-      // startDateFmt = startDateFmt; //parseInt(moment(startDateFmt, "YYYY-MM-DD").unix());
-      // endDateFmt = endDateFmt; //parseInt(moment(endDateFmt, "YYYY-MM-DD").unix()) + 86400; //number of seconds in a day
-      console.log("startDateFmt", startDateFmt, "endDateFmt", endDateFmt);
-
-      let selectedMainLocId = main_location_id;
-      let selectedSubLocId = sub_location_id;
-      let selectedServingServIds = serving_services_id_list;
-      //let selected_token_statuses = selected_token_statuses;
-
-      if (
-        selectedMainLocId !== null &&
-        selectedSubLocId !== null &&
-        selectedServingServIds !== null &&
-        selectedServingServIds.length > 0
-      ) {
-        let response;
-
-        let params = {
-          version: "1",
-          cmd_: "C7",
-          // apiKey: api_key || "",
-          customerId: customer_id || "",
-          mainLocId: main_location_id || "",
-          subLocId: sub_location_id || "",
-          // serviceId: service_id || "",
-          counterId: counter_id || "",
-          emailId: email || "",
-          userId: email || "",
-          userName: user_name || "",
-          // ^common params
-          startDateFmt: startDateFmt,
-          endDateFmt: endDateFmt,
-          // selectedMainLocId: selectedMainLocId,
-          // selectedSubLocId: selectedSubLocId,
-          tokSearchNum: tokSearchNum || "",
-          selectedServingServIds: selectedServingServIds,
-        };
-
-        let c3Result = await callApiHandleCounterRun({ params });
-        // console.log("c3Result", c3Result);
-
-        // callApiHandleCounterRun({ params }).then((e) => {
-        if (c3Result != undefined && c3Result.result != undefined) {
-          console.log(c3Result.result);
-          set_token_details_list([]);
-          set_token_details_list(c3Result.result);
-          set_loading(false);
-          if (
-            tokSearchNum == "" ||
-            tokSearchNum == undefined ||
-            tokSearchNum == null
-          ) {
-            toggleModalClassic();
-
-            //no action to be taken (modal already visible)
-          } else {
-            //show modal
-            // toggleModalClassic(modalTitle1, modalBody1); //TESTING_ONLY firdous urgent
-          }
-        }
-      } else if (selectedMainLocId === null || selectedSubLocId === null) {
-        showAlert({
-          message: "Main location or Sub location not correctly loaded!",
-          set_alert,
-          severity: "error",
-          timeout: 6000,
-        });
-        // notifyMessage(
-        //   "tc",
-        //   3,
-        //   "Main location or Sub location not correctly loaded!"
-        // );
-        set_loading(false);
-        console.log({
-          selectedMainLocId: selectedMainLocId,
-          selectedSubLocId: selectedSubLocId,
-          selectedServingServIds: selectedServingServIds,
-          selected_servicesLength: selectedServingServIds.length,
-        });
-      } else if (
-        selectedServingServIds === null ||
-        typeof selectedServingServIds.length === "undefined" ||
-        selectedServingServIds.length <= 0
-      ) {
-        showAlert({
-          message:
-            "You must set Serving Services so as to include those services in the search!",
-          set_alert,
-          severity: "error",
-          timeout: 6000,
-        });
-        // notifyMessage(
-        //   "tc",
-        //   3,
-        //   "You must set Serving Services so as to include those services in the search!"
-        // );
-        set_loading(false);
-        console.log({
-          selectedMainLocId: selectedMainLocId,
-          selectedSubLocId: selectedSubLocId,
-          selectedServingServIds: selectedServingServIds,
-          selected_servicesLength: selectedServingServIds.length,
-        });
-      }
-    };
-
-    const formatTokenStatus = (str) => {
-      var splitStr = str.toLowerCase().split("_");
-      for (var i = 0; i < splitStr.length; i++) {
-        //for (var i = 0, len = splitStr.length; i < len i++) {
-        splitStr[i] =
-          splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-      }
-      return splitStr.join(" ");
-    };
-
-    useEffect(() => {
-      getTokenDetails();
-    }, [modal_classic]);
-
-    const getTokenDetails = () => {
-      let data = [];
-      if (typeof token_details_list == "object")
-        token_details_list.map((prop, key) => {
-          let inputSource = "";
-          if (prop.input_source === "Android_Dispenser_API") {
-            inputSource = "Dispenser";
-          } else if (prop.input_source === "Mobile_App") {
-            inputSource = "Mobile";
-          } else if (prop.input_source === "Web_Interface") {
-            inputSource = "Web";
-          }
-
-          let input_source_content;
-          if (
-            prop.input_source === "Android_Dispenser_API" ||
-            prop.input_source === "Web_Interface"
-          ) {
-            input_source_content = (
-              <span className="badge badge-pill badge-info">{inputSource}</span>
-            );
-          } else {
-            input_source_content = (
-              <span className="badge badge-pill badge-success">
-                {inputSource}
-              </span>
-            );
-          }
-
-          let mau_details_content;
-          if (
-            typeof prop.mau_id !== "undefined" &&
-            prop.mau_id !== null &&
-            prop.mau_id !== ""
-          ) {
-            mau_details_content =
-              prop.mau_name + " / " + prop.mau_email + " / " + prop.mau_contact;
-          } else {
-            mau_details_content = "N/A";
-          }
-
-          let tokStatus = "";
-          tokStatus = formatTokenStatus(prop.token_status);
-
-          let tokenStatusComponent;
-
-          if (
-            prop.token_status === "Closed" ||
-            prop.token_status === "Cancelled" ||
-            prop.token_status === "No_show" ||
-            prop.token_status === "No_Show" ||
-            prop.token_status === "Rejected"
-          ) {
-            tokenStatusComponent = (
-              <span className="badge badge-pill badge-danger">{tokStatus}</span>
-            );
-          } else {
-            if (
-              prop.token_status === "Pending" ||
-              prop.token_status === "Pending_Approval"
-            ) {
-              tokenStatusComponent = (
-                <span className="badge badge-pill badge-warning">
-                  {tokStatus}
-                </span>
-              );
-            } else {
-              if (
-                prop.token_status === "Now_Serving" ||
-                prop.token_status === "Approved_Pending_Service"
-              ) {
-                tokenStatusComponent = (
-                  <span className="badge badge-pill badge-info">
-                    {tokStatus}
-                  </span>
-                );
-              } else {
-                if (prop.token_status === "Served") {
-                  tokenStatusComponent = (
-                    <span className="badge badge-pill badge-success">
-                      {tokStatus}
-                    </span>
-                  );
-                } else {
-                  tokenStatusComponent = (
-                    <span className="badge badge-pill badge-default">
-                      {tokStatus}
-                    </span>
-                  );
-                }
-              }
-            }
-          }
-
-          let action_content;
-          action_content = (
-            <Button
-              size="xs"
-              className="btn btn-primary btn-sm"
-              color="danger"
-              onClick={() => updateTokenRecall(prop)}
-            >
-              Recall Token
-            </Button>
-          );
-
-          data.push({
-            num: key + 1,
-            id: key + 1,
-            serv_name: prop.serv_name,
-            token_num: prop.token_num,
-            new_tok_ref_num: prop.new_tok_ref_num,
-            input_source: input_source_content,
-            mau_details: mau_details_content,
-            token_status: tokenStatusComponent,
-            action: action_content,
-          });
-        });
-
-      setTokenData(data);
-      return data;
-    };
-
-    const handleTokenSearch = () => {
-      let tokSearchTerm = token_search_term;
-      let tokSearchNum = "";
-      // console.log("tokSearchTerm.replace(/s/g, '').length", tokSearchTerm.replace(/\s/g, "").length);
-      if (
-        tokSearchTerm !== undefined &&
-        tokSearchTerm.replace(/\s/g, "").length !== 0
-      ) {
-        tokSearchNum = token_search_term.toString();
-      } else {
-        tokSearchNum = "";
-      }
-
-      // console.log("tokSearchNum", tokSearchNum);
-      loadTokenDetails(tokSearchNum);
-    };
-
-    const handleTokenSearchClear = () => {
-      set_token_search_term("");
-    };
-
-    // const notifyMessage = (place, color, text) => {
-    //   var type;
-
-    //   switch (color) {
-    //     case 1:
-    //       type = "primary";
-    //       break;
-    //     case 2:
-    //       type = "success";
-    //       break;
-    //     case 3:
-    //       type = "danger";
-    //       break;
-    //     case 4:
-    //       type = "warning";
-    //       break;
-    //     case 5:
-    //       type = "info";
-    //       break;
-    //     default:
-    //       break;
-    //   }
-
-    //   var options = {};
-    //   options = {
-    //     place: place,
-    //     message: (
-    //       <div className="text-md-center">
-    //         <div>
-    //           <b>{text}</b>
-    //         </div>
-    //       </div>
-    //     ),
-    //     type: type,
-    //     icon: "now-ui-icons ui-1_bell-53",
-    //     autoDismiss: 3,
-    //   };
-
-    //   if (notifyAlert !== null && notifyAlert.current != null) {
-    //     // notificationAlert.notificationAlert(options);
-    //     notifyAlert.current.notificationAlert(options);
-    //   }
-    // };
-    async function serviceDetUpdate(type = "counter_run") {
-      let params = {
-          version: "1",
-          cmd_: "C8",
-          customerId: customer_id || "",
-          mainLocId: main_location_id || "",
-          subLocId: sub_location_id || "",
-          counterId: counter_id || "",
-          emailId: email || "",
-          userId: email || "",
-          userName: user_name || "",
-          timeZone: time_zone || "",
-          refAction: type,
-        },
-        c8Result;
-      c8Result = await callApiHandleCounterRun({ params });
-    }
-
-    const getServices = (e) => {
-      return services_list.map((prop, key) => {
-        return (
-          <tr key={key}>
-            <td>{prop.name}</td>
-            <td>{prop.serv_last_called_tok}</td>
-            <td>{prop.pending}</td>
-            {call_specific_service == true ? (
-              <td>
-                <Col
-                  md="2"
-                  xs="2"
-                  data-id={prop.id}
-                  className="service text-center"
-                >
-                  <FormGroup switch>
-                    <Input
-                      type="switch"
-                      defaultValue={
-                        filtered_services_id_list.includes(prop.id)
-                          ? true
-                          : false
-                      } //{false}
-                      checked={
-                        filtered_services_id_list.includes(prop.id)
-                          ? true
-                          : false
-                      }
-                      offColor="success"
-                      offText="OFF"
-                      onColor="success"
-                      onText="ON"
-                      onChange={({target:{value}}) => {
-                        {
-                          /* console.log(prop); */
-                        }
-                        var filteredServList = [];
-                        if (value) {
-                          filteredServList = [
-                            ...filtered_services_id_list,
-                            prop.id,
-                          ];
-                          set_filtered_services_id_list(filteredServList); //TESTING_FUNCTIONAL
-                        } else {
-                          filteredServList = filtered_services_id_list.filter(
-                            (item) => item != prop.id
-                          );
-                          set_filtered_services_id_list(filteredServList); //TESTING_FUNCTIONAL
-                        }
-
-                        serviceDetUpdate();
-                        set_filterLatency(0);
-                        fil1 = 0;
-                        handleFilters(filteredServList);
-                      }}
-                    />
-                  </FormGroup>
-                </Col>
-              </td>
-            ) : null}
-            {generate_token_for_specific_service == true ? (
-              <td>
-                <Row className="justify-content-md-center" data-id={prop.id}>
-                  <Button
-                    size="xs"
-                    className="col-8"
-                    color="info"
-                    onClick={() => handleGenerateNewTokenNum(prop.id)}
-                  >
-                    NEW TOKEN
-                  </Button>
-                  {modify_service_details_for_display == true ? (
-                    <ServiceModalBtn
-                      service={prop}
-                      serviceDetailsForDisplays={sublocationServicesDetails}
-                      btnDisabled={!!prop?.serviceDetailsForDisplaysToggle}
-                      serviceRef={Firebase.firestore()
-                        .collection("Services")
-                        .doc(prop?.id)}
-                      sublocationRef={Firebase.firestore()
-                        .collection("Sub_Locations")
-                        .doc(prop?.sub_location_id)}
-                      serviceDetUpdate={() => {
-                        serviceDetUpdate();
-                        set_filterLatency(3);
-                        fil1 = 0;
-                      }}
-                    />
-                  ) : null}
-                </Row>
-              </td>
-            ) : null}
-          </tr>
-        );
+      let fullBaseURL = functions_base_url + "apiGenerateTokenForWebInterface";
+      console.log("functions_base_url fullBaseURL", fullBaseURL);
+      console.log({
+        EmailId: email,
+        ApiKey: apiKey,
+        ServiceId: serviceId,
+        SubLocId: subLocId,
+        MainLocId: mainLocId,
       });
-    };
-
-    const handleGenerateNewTokenNum = (serviceId) => {
-      console.log("running handleGenerateNewTokenNum()__ serviceId", serviceId);
-
-      var email = JSON.parse(localStorage.getItem("auth_info") || "{}").email;
-
-      let apiKey = 8700077; //"LNBqORi";     //ApiKey            || "";
-      let subLocId = sub_location_id; //SubLocId          || "";
-      let mainLocId = main_location_id; //MainLocId         || "";
-
-      let currentUser = Firebase.auth().currentUser;
-      currentUser.getIdToken().then(function (token) {
-        const requestOptions = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        };
-
-        let fullBaseURL =
-          functions_base_url + "apiGenerateTokenForWebInterface";
-        console.log("functions_base_url fullBaseURL", fullBaseURL);
-        console.log({
+      let url = new URL(fullBaseURL),
+        params = {
           EmailId: email,
           ApiKey: apiKey,
           ServiceId: serviceId,
           SubLocId: subLocId,
           MainLocId: mainLocId,
-        });
-        let url = new URL(fullBaseURL),
-          params = {
-            EmailId: email,
-            ApiKey: apiKey,
-            ServiceId: serviceId,
-            SubLocId: subLocId,
-            MainLocId: mainLocId,
-          };
-        Object.keys(params).forEach((key) =>
-          url.searchParams.append(key, params[key])
-        );
-        fetch(url, requestOptions)
-          .then((response) => response.json())
-          .then((tokenData) => {
-            showSuccessfulNewToken(tokenData);
-          })
-          .catch(function (error) {
-            set_loading(false);
-            showAlert({
-              message: "Network error, while generating a new token!",
-              set_alert,
-              severity: "error",
-              timeout: 6000,
-            });
-            // notifyMessage("tc", 3, "Network error!");
-            console.log("handleGenerateNewTokenNum NetworkError==>", error);
+        };
+      Object.keys(params).forEach((key) =>
+        url.searchParams.append(key, params[key])
+      );
+      fetch(url, requestOptions)
+        .then((response) => response.json())
+        .then((tokenData) => {
+          showSuccessfulNewToken(tokenData);
+        })
+        .catch(function (error) {
+          set_loading(false);
+          showAlert({
+            message: "Network error, while generating a new token!",
+            setAlert:set_alert,
+            severity: "error",
+            timeout: 6000,
           });
+          // notifyMessage("tc", 3, "Network error!");
+          console.log("handleGenerateNewTokenNum NetworkError==>", error);
+        });
+    });
+  };
+
+  const showSuccessfulNewToken = (tokenData) => {
+    console.log("tokenData", tokenData);
+    var newTokenTitle = "";
+    if (tokenData.status == "success") {
+      newTokenTitle =
+        "New Token Generated: " +
+        tokenData.result.StartCharacter +
+        tokenData.result.Token;
+      // set_alert();
+      showAlert({
+        message: newTokenTitle,
+        setAlert:set_alert,
+        severity: "success",
+        timeout: 6000,
       });
-    };
+      // <ReactBSAlert
+      //   success
+      //   showCancel
+      //   showCloseButton
+      //   confirmBtnText="Print"
+      //   cancelBtnText="SMS"
+      //   confirmBtnBsStyle="info"
+      //   cancelBtnBsStyle="danger"
+      //   title={newTokenTitle}
+      //   onConfirm={() => printTokenNum(tokenData.result)}
+      //   onCancel={() => hideAlert()}
+      //   customButtons={
+      //     <React.Fragment>
+      //       {/* <button onClick={() => printTokenNum(tokenData.result)}>
+      //         Print
+      //       </button>
+      //       <button onClick={() => promptSendTwilioText(tokenData.result)}>
+      //         SMS
+      //       </button> */}
+      //       <button onClick={() => hideAlert()}>Close</button>
+      //     </React.Fragment>
+      //   }
+      // ></ReactBSAlert>
+    } else {
+      newTokenTitle = tokenData.message;
+      showAlert({
+        message: newTokenTitle,
+        setAlert:set_alert,
+        severity: "error",
+        timeout: 6000,
+      });
+      set_alert();
+      // <ReactBSAlert
+      //   success
+      //   showCloseButton
+      //   title={newTokenTitle}
+      //   onConfirm={() => hideAlert()}
+      //   onCancel={() => hideAlert()}
+      //   confirmBtnBsStyle="info"
+      // ></ReactBSAlert>
+    }
+  };
 
-    const showSuccessfulNewToken = (tokenData) => {
-      console.log("tokenData", tokenData);
-      var newTokenTitle = "";
-      if (tokenData.status == "success") {
-        newTokenTitle =
-          "New Token Generated: " +
-          tokenData.result.StartCharacter +
-          tokenData.result.Token;
-        set_alert();
-        // <ReactBSAlert
-        //   success
-        //   showCancel
-        //   showCloseButton
-        //   confirmBtnText="Print"
-        //   cancelBtnText="SMS"
-        //   confirmBtnBsStyle="info"
-        //   cancelBtnBsStyle="danger"
-        //   title={newTokenTitle}
-        //   onConfirm={() => printTokenNum(tokenData.result)}
-        //   onCancel={() => hideAlert()}
-        //   customButtons={
-        //     <React.Fragment>
-        //       {/* <button onClick={() => printTokenNum(tokenData.result)}>
-        //         Print
-        //       </button>
-        //       <button onClick={() => promptSendTwilioText(tokenData.result)}>
-        //         SMS
-        //       </button> */}
-        //       <button onClick={() => hideAlert()}>Close</button>
-        //     </React.Fragment>
-        //   }
-        // ></ReactBSAlert>
-      } else {
-        newTokenTitle = tokenData.message;
-        set_alert();
-        // <ReactBSAlert
-        //   success
-        //   showCloseButton
-        //   title={newTokenTitle}
-        //   onConfirm={() => hideAlert()}
-        //   onCancel={() => hideAlert()}
-        //   confirmBtnBsStyle="info"
-        // ></ReactBSAlert>
-      }
-    };
+  const hideAlert = () => {
+    set_alert(null);
+    set_loading(false);
+  };
 
-    const hideAlert = () => {
-      set_alert(null);
-      set_loading(false);
-    };
+  // const handlePrint = useReactToPrint({
+  //   content: () => componentRef.current,
+  // });
 
-    // const handlePrint = useReactToPrint({
-    //   content: () => componentRef.current,
-    // });
+  // const dispatch = (action) => {
+  //   // console.log("kaReducer", kaReducer(_this.state.tableprops, action));
+  //   set_token_data({
+  //     tokenData: kaReducer(tokenData, action),
+  //   });
+  // };
+  // console.log('alert',alert);
+  return (
+    <>
+      {/* <NotificationAlert ref={notifyAlert} /> */}
+      {alert}
 
-    // const dispatch = (action) => {
-    //   // console.log("kaReducer", kaReducer(_this.state.tableprops, action));
-    //   set_token_data({
-    //     tokenData: kaReducer(tokenData, action),
-    //   });
-    // };
-
-    return (
-      <>
-        {/* <NotificationAlert ref={notifyAlert} /> */}
-        {alert}
-
-        <Modal
-          size="lg"
-          backdrop={"static"}
-          //dialogClassName="modal-90w"
-          aria-labelledby="example-custom-modal-styling-title"
-          isOpen={modal_classic}
+      <Modal
+        size="lg"
+        backdrop={"static"}
+        //dialogClassName="modal-90w"
+        aria-labelledby="example-custom-modal-styling-title"
+        isOpen={modal_classic}
+        toggle={toggleModalClassic}
+      >
+        <ModalHeader
+          className="justify-content-center"
           toggle={toggleModalClassic}
         >
-          <ModalHeader
-            className="justify-content-center"
-            toggle={toggleModalClassic}
-          >
-            Recall Past Token Number
-          </ModalHeader>
-          <div className="modal-body">
-            <div className="content">
-              <Form className="form-horizontal">
-                <div>
-                  <CardTitle tag="h4">
-                    Tokens generated by Web App client today:
-                  </CardTitle>
-                </div>
+          Recall Past Token Number
+        </ModalHeader>
+        <div className="modal-body">
+          <div className="content">
+            <Form className="form-horizontal">
+              <div>
+                <CardTitle tag="h4">
+                  Tokens generated by Web App client today:
+                </CardTitle>
+              </div>
 
-                <div>
-                  {typeof tokenData !== "undefined" &&
-                  tokenData !== null &&
-                  tokenData.length > 0 ? (
-                    <>
-                      <Row
-                        className="justify-content-center align-items-center"
-                        style={{ rowGap: "15px" }}
-                      >
-                        <div md="4">Search Token Number</div>
-                        <Col md="4">
-                          <FormGroup className="mb-0">
-                            <Input
-                              defaultValue={""}
-                              type="text"
-                              onChange={(e) => {
-                                set_token_search_term(e.target.value);
-                              }}
-                            />
-                          </FormGroup>
-                        </Col>
+              <div>
+                {typeof tokenData !== "undefined" &&
+                tokenData !== null &&
+                tokenData.length > 0 ? (
+                  <>
+                    <Row
+                      className="justify-content-center align-items-center"
+                      style={{ rowGap: "15px" }}
+                    >
+                      <div md="4">Search Token Number</div>
+                      <Col md="4">
+                        <FormGroup className="mb-0">
+                          <Input
+                            defaultValue={""}
+                            type="text"
+                            onChange={(e) => {
+                              set_token_search_term(e.target.value);
+                            }}
+                          />
+                        </FormGroup>
+                      </Col>
 
-                        <Button
-                          size="xs"
-                          color="primary"
-                          className="my-0"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleTokenSearch();
-                          }}
-                        >
-                          Search
-                        </Button>
-
-                        <Button
-                          size="xs"
-                          color="danger"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleTokenSearchClear();
-                          }}
-                        >
-                          Clear
-                        </Button>
-                      </Row>
-
-                      <br></br>
-
-                      <div>
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Service Name</th>
-                              <th>Token Number</th>
-                              <th>New Token Number</th>
-                              <th>Input Source</th>
-                              <th>Mobile App User</th>
-                              <th>Token Status</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {tokenData?.map((token, index) => (
-                              <tr key={index}>
-                                <td>{token?.num}</td>
-                                <td>{token?.serv_name}</td>
-                                <td>{token?.token_num}</td>
-                                <td>{token?.new_tok_ref_id}</td>
-                                <td>{token?.input_source}</td>
-                                <td>{token?.mau_details}</td>
-                                <td>{token?.token_status}</td>
-                                <td>{token?.action}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
+                      <Button
+                        size="xs"
+                        color="primary"
+                        className="my-0"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTokenSearch();
                         }}
                       >
-                        <lottie-player
-                          src="/empty-search-result-lottie-data.json"
-                          background="transparent"
-                          speed="1"
-                          style={{ width: "360px", height: "360px" }}
-                          loop
-                          autoplay
-                        ></lottie-player>
-                        No tokens generated by Web App client exist for today!
-                      </div>
-                    </>
-                  )}
-                </div>
-              </Form>
-            </div>
-          </div>
-        </Modal>
+                        Search
+                      </Button>
 
-            <Row id="counter">
-              <Col md="9" id="counter123">
-                <Card>
-                  <CardHeader>
-                    <CardTitle tag="h4">Counter Run</CardTitle>
-                  </CardHeader>
-                  <CardBody>
-                    <Row>
-                      <Col md="4">
-                        <Card style={{ height: "6rem" }}>
-                          <CardBody>
-                            <div className="d-flex" style={{gap:'1rem'}}>
-                              <div>
-                                Serving time
-                                <h3>
-                                  {serving_services_id_list.length > 0 &&
-                                  serving_services_id_list.length != undefined
-                                    ? curr_serv_time_HrMinSec
-                                    : ""}
-                                </h3>
-                                {/* <XCounter/> */}
-                              </div>
-                            </div>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                      <Col md="4">
-                        <Card style={{ height: "6rem" }}>
-                          <CardBody>
-                            <div className="d-flex" style={{gap:'1rem'}}>
-                              <div>
-                                Token
-                                <h3>
-                                  {curr_token != undefined
-                                    ? curr_token.number
-                                    : ""}
-                                </h3>
-                              </div>
-                              <div>
-                                Taken At
-                                <h6>
-                                  {curr_token.taken_at != undefined
-                                    ? curr_token.taken_at.split("UTC")[0]
-                                    : ""}
-                                </h6>
-                              </div>
-                            </div>
-                          </CardBody>
-                        </Card>
-                        {/* <h1>{counter_state}</h1> */}
-                      </Col>
-                      <Col md="4">
-                        <Card
-                        >
-                          <CardBody>
-                            <div className="d-flex" style={{gap:'1rem'}}>
-                              <div>
-                                Token Status
-                                <h4 className="my-0">
-                                  {curr_token.status != undefined
-                                    ? curr_token.status
-                                    : ""}
-                                </h4>
-                              </div>
-                            </div>
-                           
-                            <Row>
-                              <Col className="">
-                              
-                              </Col>
-                            </Row>
-                          </CardBody>
-                        </Card>
-                      </Col>
+                      <Button
+                        size="xs"
+                        color="danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTokenSearchClear();
+                        }}
+                      >
+                        Clear
+                      </Button>
                     </Row>
-                    <Table striped bordered hover>
-                      <thead>
-                        <tr>
-                          <th>Service Name</th>
-                          <th>Last Called Token</th>
-                          {/* //_Total&Served_//<th>Total</th> */}
-                          <th>Pending</th>
-                          {/* //_Total&Served_//<th>Served</th> */}
-                          {call_specific_service == true ? (
-                            <th>Filter Calls</th>
-                          ) : null}
-                          {generate_token_for_specific_service == true ? (
-                            <th>Actions</th>
-                          ) : null}
-                        </tr>
-                      </thead>
-                      <tbody>{getServices()}</tbody>
-                    </Table>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col md="3">
-                <Card>
-                  {/* <CardHeader>
-                                <CardTitle tag="h4">Counter Operate</CardTitle>
-                            </CardHeader> */}
-                  <CardBody>
+
+                    <br></br>
+
                     <div>
-                      <Row className="justify-content-md-center">
-                        <Button
-                          size="lg"
-                          className="col-10"
-                          color="primary"
-                          onClick={() => handleCallNextToken()}
-                        >
-                          Next
-                        </Button>
-                      </Row>
-                      <Row className="justify-content-md-center">
-                        <Button
-                          size="lg"
-                          className="col-10"
-                          color="success"
-                          onClick={() => showTokenDetail(curr_token.id)}
-                        >
-                          View Details
-                        </Button>
-                      </Row>
-                      <Row className="justify-content-md-center">
-                        <Button
-                          size="lg"
-                          className="col-10"
-                          color="warning"
-                          onClick={() => handleNoShowToken()}
-                        >
-                          No Show
-                        </Button>
-                      </Row>
-                      <Row className="justify-content-md-center">
-                        <Button
-                          size="lg"
-                          className="col-10"
-                          color="danger"
-                          onClick={() => handleRepeatToken()}
-                        >
-                          Repeat
-                        </Button>
-                      </Row>
-                      {recall_already_called_token == true ? (
-                        <Row className="justify-content-md-center">
-                          <Button
-                            size="lg"
-                            className="col-10"
-                            color="danger"
-                            onClick={() => handleRecallToken()}
-                          >
-                            Recall
-                          </Button>
-                        </Row>
-                      ) : null}
-                      <Row className="justify-content-md-center">
-                        <Button
-                          size="lg"
-                          className="col-10"
-                          color="youtube"
-                          onClick={() => handleCloseCounter()}
-                        >
-                          Close Counter
-                        </Button>
-                      </Row>
-                      <Row className="justify-content-md-left">
-                        <Col md="12" className="">
-                          Counter State
-                        </Col>
-                      </Row>
-                      <CreatableSelect
-                        isClearable
-                        defaultValue={default_counter_state}
-                        isDisabled={false}
-                        //isValidNewOption={isValidBillingCounterState}
-                        value={counter_state}
-                        onChange={handleChangeCounterState}
-                        options={combined_counter_states}
-                      />
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Service Name</th>
+                            <th>Token Number</th>
+                            <th>New Token Number</th>
+                            <th>Input Source</th>
+                            <th>Mobile App User</th>
+                            <th>Token Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tokenData?.map((token, index) => (
+                            <tr key={index}>
+                              <td>{token?.num}</td>
+                              <td>{token?.serv_name}</td>
+                              <td>{token?.token_num}</td>
+                              <td>{token?.new_tok_ref_id}</td>
+                              <td>{token?.input_source}</td>
+                              <td>{token?.mau_details}</td>
+                              <td>{token?.token_status}</td>
+                              <td>{token?.action}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="12">
-                <Card>
-                  <CardHeader>
-                    <CardTitle tag="h4">Counter Info</CardTitle>
-                  </CardHeader>
-                  <CardBody>
-                    <Row>
-                      <Col md="6">
-                        Counter: <h6>{counter_name}</h6>
-                      </Col>
-                      <Col md="6">
-                        User: <h6>{user_name}</h6>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md="6">
-                        Location address:{" "}
-                        <h6>{main_location_name + "\\" + sub_location_name}</h6>
-                      </Col>
-                      <Col md="6">
-                        {locked ? "Locked to computer" : "Not locked"}
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-      </>
-    );
-  
+                  </>
+                ) : (
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <lottie-player
+                        src="/empty-search-result-lottie-data.json"
+                        background="transparent"
+                        speed="1"
+                        style={{ width: "360px", height: "360px" }}
+                        loop
+                        autoplay
+                      ></lottie-player>
+                      No tokens generated by Web App client exist for today!
+                    </div>
+                  </>
+                )}
+              </div>
+            </Form>
+          </div>
+        </div>
+      </Modal>
+
+      <Row id="counter" className="p-2">
+        <Col md="9" id="counter123">
+          <Card>
+            <CardHeader>
+              <CardTitle tag="h4">Counter Run</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Row className="mb-2">
+                <Col md="4">
+                  <Card style={{ height: "6rem" }}>
+                    <CardBody>
+                      <div className="d-flex" style={{ gap: "1rem" }}>
+                        <div className="text-start">
+                          Serving time
+                          <h3>
+                            {serving_services_id_list.length > 0 &&
+                            serving_services_id_list.length != undefined
+                              ? curr_serv_time_HrMinSec
+                              : ""}
+                          </h3>
+                          {/* <XCounter/> */}
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col md="4">
+                  <Card style={{ height: "6rem" }}>
+                    <CardBody>
+                      <div className="d-flex" style={{ gap: "1rem" }}>
+                        <div className="text-start">
+                          Token
+                          <h3>
+                            {curr_token != undefined ? curr_token.number : ""}
+                          </h3>
+                        </div>
+                        <div className="text-start">
+                          Taken At
+                          <h6>
+                            {curr_token.taken_at != undefined
+                              ? curr_token.taken_at.split("UTC")[0]
+                              : ""}
+                          </h6>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                  {/* <h1>{counter_state}</h1> */}
+                </Col>
+                <Col md="4">
+                  <Card style={{ height: "6rem" }}>
+                    <CardBody>
+                      <div className="d-flex" style={{ gap: "1rem" }}>
+                        <div className="text-start">
+                          Token Status
+                          <h4 className="my-0">
+                            {curr_token.status != undefined
+                              ? curr_token.status
+                              : ""}
+                          </h4>
+                        </div>
+                      </div>
+
+                      <Row>
+                        <Col className=""></Col>
+                      </Row>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Service Name</th>
+                    <th>Last Called Token</th>
+                    {/* //_Total&Served_//<th>Total</th> */}
+                    <th>Pending</th>
+                    {/* //_Total&Served_//<th>Served</th> */}
+                    {call_specific_service == true ? (
+                      <th>Filter Calls</th>
+                    ) : null}
+                    {generate_token_for_specific_service == true ? (
+                      <th>Actions</th>
+                    ) : null}
+                  </tr>
+                </thead>
+                <tbody style={{ overflow: "auto" }}>{getServices()}</tbody>
+              </Table>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col md="3">
+          <Card>
+            <CardBody>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <Row className="justify-content-center">
+                  <Button
+                    size="lg"
+                    className="col-10"
+                    color="primary"
+                    onClick={() => handleCallNextToken()}
+                  >
+                    Next
+                  </Button>
+                </Row>
+                <Row className="justify-content-center">
+                  <Button
+                    size="lg"
+                    className="col-10"
+                    color="success"
+                    onClick={() => showTokenDetail(curr_token.id)}
+                  >
+                    View Details
+                  </Button>
+                </Row>
+                <Row className="justify-content-center">
+                  <Button
+                    size="lg"
+                    className="col-10"
+                    color="warning"
+                    onClick={() => handleNoShowToken()}
+                  >
+                    No Show
+                  </Button>
+                </Row>
+                <Row className="justify-content-center">
+                  <Button
+                    size="lg"
+                    className="col-10"
+                    color="danger"
+                    onClick={() => handleRepeatToken()}
+                  >
+                    Repeat
+                  </Button>
+                </Row>
+                {recall_already_called_token == true ? (
+                  <Row className="justify-content-center">
+                    <Button
+                      size="lg"
+                      className="col-10"
+                      color="danger"
+                      onClick={() => handleRecallToken()}
+                    >
+                      Recall
+                    </Button>
+                  </Row>
+                ) : null}
+                <Row className="justify-content-center">
+                  <Button
+                    size="lg"
+                    className="col-10"
+                    style={{background:'red'}}
+                    color="danger"
+                    onClick={() => handleCloseCounter()}
+                  >
+                    Close Counter
+                  </Button>
+                </Row>
+                <Row className="justify-content-left">
+                  <Col md="12" className="">
+                    Counter State
+                  </Col>
+                </Row>
+                <CreatableSelect
+                  isClearable
+                  defaultValue={default_counter_state}
+                  isDisabled={false}
+                  //isValidNewOption={isValidBillingCounterState}
+                  value={counter_state}
+                  onChange={handleChangeCounterState}
+                  options={combined_counter_states}
+                />
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="p-2 text-start">
+        <Col md="12">
+          <Card>
+            <CardHeader>
+              <CardTitle tag="h4">Counter Info</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Row>
+                <Col md="6">
+                  Counter: <h6>{counter_name}</h6>
+                </Col>
+                <Col md="6">
+                  User: <h6>{user_name}</h6>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6">
+                  Location address:{" "}
+                  <h6>{main_location_name + "\\" + sub_location_name}</h6>
+                </Col>
+                <Col md="6">{locked ? "Locked to computer" : "Not locked"}</Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+    </>
+  );
 }
 
 export default CounterRun;

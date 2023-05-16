@@ -60,7 +60,8 @@ export default function ServiceModalBtn({
     <>
       <Button
         size="sm"
-        className="ml-1"
+        className="ml-1 text-white"
+        style={{fontSize:'1.2rem'}}
         color="info"
         onClick={handleOpen}
         disabled={!btnDisabled}

@@ -1,10 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "Antqueue counter",
+  "description": "An extension to quickly access Ant queue counter util.",
   "version": "1.0",
   "action": {
     "default_popup": "index.html",
     "default_icon": "favicon.png"
-  }
+  },
+  "permissions": [
+    "storage"
+  ]
 }

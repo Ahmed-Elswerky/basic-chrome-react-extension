@@ -1,0 +1,9 @@
+body{
+  width: 600px;
+  max-width: 97%;
+  display: flex;
+  justify-content: center;
+}
+#root{
+  /* margin: auto; */
+}

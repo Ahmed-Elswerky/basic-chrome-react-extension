@@ -6,8 +6,10 @@ import "firebase/auth";
 import config from "./config.js";
 import Login from "./views/Login";
 import { useState } from "react";
+import Counters from "./views/Counters";
+import { Button } from "reactstrap";
 export default function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   if (!Firebase.apps.length) {
     Firebase.initializeApp(config);
   }
@@ -16,7 +18,10 @@ export default function App() {
     if (user) {
       // User is signed in.
       // Your code here for authenticated user
-      setUser(user);
+      setTimeout(() => {
+        
+        setUser(user);
+      }, 150);
     } else {
       // No user is signed in.
       setUser();
@@ -24,11 +29,16 @@ export default function App() {
   });
   if (user)
     return (
-      <div>
-        <CounterRun />
-        <button onClick={() => Firebase.auth().signOut()}>logout</button>
+      <div className="text-center">
+        {/* <CounterRun /> */}
+        <Counters />
+        <Button color="danger" onClick={() =>{
+          localStorage.removeItem('counterId')
+          Firebase.auth().signOut()}}>
+          Logout
+        </Button>
       </div>
     );
-
-  return <Login />;
+  if (user ==undefined) return <Login />;
+  return "";
 }

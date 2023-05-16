@@ -4,6 +4,7 @@ import "firebase/auth";
 import "firebase/compat/firestore";
 // import PasswordHash from "password-hash";
 import config from "../config";
+import {ReactComponent as Logo} from "../assets/logo.svg";
 
 // import ReactBSAlert from "react-bootstrap-sweetalert";
 // import NotificationAlert from "react-notification-alert";
@@ -216,7 +217,7 @@ function Login(props) {
                                 );
                                 console.log("auth succes");
                                 window.setTimeout(function () {
-                                  props.history.push("/");
+                                  props?.history?.push("/");
                                 }, 2000);
                                 setState({ loading: false });
                                 // notifyMessage("tc", 2, "Login success!");
@@ -295,7 +296,6 @@ function Login(props) {
                     //   inputAlert();
                     console.log("enabled!");
                   } else {
-                    console.log(loginData);
                     Firebase.auth()
                       .createUserWithEmailAndPassword(
                         loginData.email,
@@ -352,125 +352,7 @@ function Login(props) {
         // notifyMessage("tc", 3, errorMsg);
       });
   };
-
-  function sendEmail(email, text) {
-    Firebase.functions()
-      .httpsCallable("sendMail")({
-        email: email,
-        subject: "Welcome to Antqueue Web App",
-        text: text,
-      })
-      .then(function (result) {
-        // console.log(result);
-      });
-  }
-  //   const inputAlert = () => {
-  //     setState({
-  //       alert: (
-  //         <ReactBSAlert
-  //           input
-  //           showCancel
-  //           style={{ display: "block", marginTop: "0px" }}
-  //           title="Please input your otp code."
-  //           onConfirm={(e) => inputConfirm(e)}
-  //           onCancel={() => hideAlert()}
-  //           confirmBtnBsStyle="info"
-  //           cancelBtnBsStyle="danger"
-  //         />
-  //       ),
-  //     });
-  //   };
-  //   const inputConfirm = (e) => {
-  //     varthis = this;
-  //     setState({ loading: true });
-  //     var user_email = state.email.toLowerCase();
-  //     // if (_state.social_email !== "") {
-  //     //     user_email =state.social_email.toLowerCase();
-  //     // }
-
-  //     var now = new Date();
-  //     Firebase.firestore()
-  //       .collection("Web_App_Users")
-  //       .doc(user_email)
-  //       .get()
-  //       .then(function (doc) {
-  //         if (doc.exists) {
-  //           if (doc.data().OTP_Code === e) {
-  //             var auth_info = {
-  //               customer_id: doc.data().Customer_ID,
-  //               email: doc.id,
-  //               role: doc.data().Role,
-  //               support_admin_role: doc.data().Support_Admin_Role,
-  //               username: doc.data().Name,
-  //             };
-  //             var otp_code = generateId(6);
-  //             var update_otp_data = {
-  //               Last_Activity_Date: now,
-  //               OTP_Code: otp_code,
-  //             };
-
-  //             Firebase.firestore()
-  //               .collection("Web_App_Users")
-  //               .doc(user_email)
-  //               .update(update_otp_data)
-  //               .then(function () {
-  //                 var text =
-  //                   "Your otp code is changed.<br/>" +
-  //                   "Otp code : <b>" +
-  //                   otp_code +
-  //                   "</b>";
-  //                 Firebase.functions()
-  //                   .httpsCallable("sendMail")({
-  //                     email: user_email,
-  //                     subject: "New OTP Code",
-  //                     text: text,
-  //                   })
-  //                   .then(function (result) {
-  //                     if (_state.rememberMe === "1")
-  //                       state.cookies.set("auth_info", auth_info.email);
-
-  //                     localStorage.setItem(
-  //                       "auth_info",
-  //                       JSON.stringify(auth_info)
-  //                     );
-  //                     notifyMessage("tc", 2, "Login success!");
-  //                     setState({ loading: false });
-  //                     hideAlert();
-  //                     window.setTimeout(function () {
-  //                       props.history.push("/");
-  //                     }, 2000);
-  //                   })
-  //                   .catch(function (err) {
-  //                     setState({ loading: false });
-  //                     hideAlert();
-  //                     notifyMessage("tc", 3, "Network error!");
-  //                     console.log("inputConfirm NetworkError15==>", err);
-  //                   });
-  //               });
-  //           } else {
-  //             setState({ loading: false });
-  //             hideAlert();
-  //             notifyMessage("tc", 3, "Incorrect otp code!");
-  //           }
-  //         } else {
-  //           setState({ loading: false });
-  //           hideAlert();
-  //           notifyMessage("tc", 3, "Network error!");
-  //           console.log("inputConfirm NetworkError16");
-  //         }
-  //       })
-  //       .catch(function (err) {
-  //         setState({ loading: false });
-  //         hideAlert();
-  //         notifyMessage("tc", 3, "Network error!");
-  //         console.log("inputConfirm NetworkError17==>", err);
-  //       });
-  //   };
-  //   const hideAlert = () => {
-  //     setState({
-  //       alert: null,
-  //     });
-  //   };
+ 
   const verifyEmail = (value) => {
     var emailRex =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -485,57 +367,8 @@ function Login(props) {
       return true;
     }
     return false;
-  };
-  //   const notifyMessage = (place, color, text) => {
-  //     letthis = this;
-  //     var type;
-  //     switch (color) {
-  //       case 1:
-  //         type = "primary";
-  //         break;
-  //       case 2:
-  //         type = "success";
-  //         break;
-  //       case 3:
-  //         type = "danger";
-  //         break;
-  //       case 4:
-  //         type = "warning";
-  //         break;
-  //       case 5:
-  //         type = "info";
-  //         break;
-  //       default:
-  //         break;
-  //     }
+  };  
 
-  //     var options = {};
-  //     options = {
-  //       place: place,
-  //       message: (
-  //         <div className="text-md-center">
-  //           <div>
-  //             <b>{text}</b>
-  //           </div>
-  //         </div>
-  //       ),
-  //       type: type,
-  //       icon: "now-ui-icons ui-1_bell-53",
-  //       autoDismiss: 3,
-  //     };
-  //     if (options !== null && notificationAlert != null) {
-  //       notificationAlert.notificationAlert(options);
-  //     }
-  //   };
-  function generateId(length) {
-    var result = "";
-    var characters = "0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
   let appVersion = process.env.REACT_APP_VERSION;
   let { registerEmailState, registerPasswordState } = state;
 
@@ -571,14 +404,15 @@ function Login(props) {
                             alignItems: "center",
                           }}
                         >
-                          <lottie-player
+                          <Logo/>
+                          {/* <lottie-player
                             src="/antqueue-animated-logo-lottie-data.json"
                             background="transparent"
                             speed="1"
                             style={{ width: "200px", height: "200px" }}
                             loop
                             autoplay
-                          ></lottie-player>
+                          ></lottie-player> */}
                         </div>
                       </div>
                       <h3
@@ -590,22 +424,22 @@ function Login(props) {
                     </CardHeader>
                   </CardHeader>
                   <CardBody>
-                    <div className="row justify-content-center">
-                      <div className="col-md-9">
-                        <label style={{ color: "#fff" }}>Email Address</label>
+                    <div className="row justify-content-center  gap-2">
+                      <div className="col-md-9 d-flex flex-column gap-2">
+                        <label style={{ color: "#000" }}>Email Address</label>
                         <InputGroup
                           className={`has-label ${registerEmailState}`}
                         >
-                          <InputGroup addonType="prepend">
+                          {/* <InputGroup addonType="prepend">
                             <InputGroupText
                               style={{
                                 padding: "10px 10px 10px 10px",
-                                backgroundColor: "#fff",
+                                backgroundColor: "#000",
                               }}
                             >
                               <i className="nc-icon nc-email-85" />
                             </InputGroupText>
-                          </InputGroup>
+                          </InputGroup> */}
                           <Input
                             placeholder="Email Address"
                             name="email"
@@ -625,20 +459,20 @@ function Login(props) {
                             </label>
                           ) : null}
                         </InputGroup>
-                        <label style={{ color: "#fff" }}>Password</label>
+                        <label style={{ color: "#000" }}>Password</label>
                         <InputGroup
                           className={`has-label ${registerPasswordState}`}
                         >
-                          <InputGroup addonType="prepend">
+                          {/* <InputGroup addonType="prepend">
                             <InputGroupText
                               style={{
                                 padding: "10px 10px 10px 10px",
-                                backgroundColor: "#fff",
+                                backgroundColor: "#000",
                               }}
                             >
                               <i className="nc-icon nc-key-25" />
                             </InputGroupText>
-                          </InputGroup>
+                          </InputGroup> */}
                           <Input
                             placeholder="Password"
                             type="password"
@@ -661,7 +495,7 @@ function Login(props) {
                           ) : null}
                         </InputGroup>
 
-                        <div className="row">
+                        <div className="row gap-2">
                           <div className="col-md-5">
                             <Button
                               color="success"
@@ -686,16 +520,17 @@ function Login(props) {
                       </div>
 
                       <span
-                        style={{ color: "#fff" }}
+                        style={{ color: "#000" }}
                         className="login-form-answer"
                       >
                         Are you a new member? Please{" "}
                         <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/register");
-                          }}
+                          href="https://app.antqueue.com"
+                          target="_blank"
+                          // onClick={(e) => {
+                          //   e.preventDefault();
+                          //   props.history.push("/register");
+                          // }}
                         >
                           Register.
                         </a>
