@@ -33,7 +33,7 @@ export default function App() {
         {/* <CounterRun /> */}
         <Counters />
         <Button color="danger" onClick={() =>{
-          localStorage.removeItem('counterId')
+          localStorage.removeItem('auth_info')
           Firebase.auth().signOut()}}>
           Logout
         </Button>

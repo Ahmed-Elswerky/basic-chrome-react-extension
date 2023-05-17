@@ -53,16 +53,23 @@ export default function Counters() {
   };
   useEffect(() => {
     var customer_id = JSON.parse(localStorage.getItem("auth_info"))?.customer_id;
-    setState({ customer_id: customer_id });
-
+    
     // console.log("auth().currentUser==>", Firebase.auth().currentUser);
     
     
-    const timeOutData =()=> setTimeout(()=>{
-      if(customer_id)
-      loadMainLocations()
-      else timeOutData()
-    }, 150);
+    const timeOutData = () =>
+      setTimeout(() => {
+        console.log("customer_id", customer_id);
+        if (customer_id) loadMainLocations();
+        else {
+          customer_id = JSON.parse(
+            localStorage.getItem("auth_info")
+          )?.customer_id;
+          setState({ customer_id: customer_id });
+
+          timeOutData();
+        }
+      }, 150);
 
     timeOutData()
  
